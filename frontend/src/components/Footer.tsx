@@ -1,61 +1,80 @@
-'use client';
-import { FaWhatsapp } from "react-icons/fa";
-import { FaLinkedin } from "react-icons/fa";
-import { FaInstagram } from 'react-icons/fa';
-import { FaEnvelope } from 'react-icons/fa';
+import Link from 'next/link';
+
 export default function Footer() {
   return (
-    <footer className="bg-zinc-900 text-gray-400 py-6 mt-12">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-        
-        {/* Left - Branding */}
-        <div className="mb-4 md:mb-0 text-center md:text-left">
-          <h2 className="text-xl font-bold text-white">aIDEAS</h2>
-          <p className="text-sm">© {new Date().getFullYear()} Aideas Association. All rights reserved.</p>
+    <footer className="site-footer">
+      <div className="footer-watermark" aria-hidden="true">
+        aiDEAS
+      </div>
+      <div className="wrap">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <span className="brand-name">
+              <span className="ai">aI</span>
+              <span className="deas">DEAS</span>
+            </span>
+            <p>
+              The AI & Data Science Association of Students at PVGCOET, Pune — built by students, for students.
+            </p>
+          </div>
+          <div className="footer-col">
+            <h5>Explore</h5>
+            <Link href="/">Home</Link>
+            <Link href="/about">About</Link>
+            <Link href="/events">Events</Link>
+          </div>
+          <div className="footer-col">
+            <h5>Community</h5>
+            <Link href="/members">Members</Link>
+            <a role="button" tabIndex={0} className="cursor-pointer" aria-label="Achievements">Achievements</a>
+            <Link href="/alumni">Alumni</Link>
+          </div>
+          <div className="footer-col">
+            <h5>Connect</h5>
+            <Link href="/contact">Contact Us</Link>
+            <a href="mailto:aideas@pvgcoet.ac.in">Email</a>
+            <a href="https://www.instagram.com/aideas_pvg/" target="_blank" rel="noopener noreferrer">
+              Instagram
+            </a>
+            <a href="https://www.linkedin.com/company/aideas-pvg/" target="_blank" rel="noopener noreferrer">
+              LinkedIn
+            </a>
+          </div>
         </div>
-
-        {/* Center - Navigation Links */}
-        <div className="flex gap-6 text-sm mb-4 md:mb-0">
-          <a href="/about" className="hover:text-white">About</a>
-          <a href="/events" className="hover:text-white">Events</a>
-          
-          <a href="/contact" className="hover:text-white">Contact Us</a>
-        </div>
-
-        {/* Right - Social Icons */}
-        <div className="flex gap-4 text-xl">
-          <a
-            href="https://www.linkedin.com/company/aideas-pvg"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            className="hover:text-white"
-          >
-            <FaLinkedin />
-          </a>
-          <a
-            href="https://www.instagram.com/aideas_pvg/?hl=en"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-            className="hover:text-white"
-          >
-            <FaInstagram />
-          </a>
-         < a
-          href="https://chat.whatsapp.com/JNR4hTuJHYB0w3F2DbDMKy?mode=ac_c"
-          target="_blank"
-          aria-label="whatsapp"
-            className="hover:text-white"
-         > <FaWhatsapp />
-         </a>
-          <a
-            href="mailto:aideas@pvgcoet.ac.in"
-            aria-label="Email"
-            className="hover:text-white"
-          >
-            <FaEnvelope />
-          </a>
+        <div className="footer-bottom">
+          <div className="footer-copy">
+            © {new Date().getFullYear()} aiDEAS — AI & Data Science Association of Students
+          </div>
+          <div className="footer-social">
+            <a
+              href="https://www.linkedin.com/company/aideas-pvg/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="aiDEAS on LinkedIn"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M4.98 3.5C4.98 4.88 3.93 6 2.5 6S0 4.88 0 3.5 1.05 1 2.48 1s2.5 1.12 2.5 2.5zM.5 8.75h4V23h-4V8.75zM8.5 8.75h3.83v1.95h.06c.53-1 1.84-2.06 3.79-2.06 4.06 0 4.81 2.67 4.81 6.14V23h-4v-6.62c0-1.58-.03-3.62-2.2-3.62-2.2 0-2.54 1.72-2.54 3.5V23h-4V8.75z" />
+              </svg>
+            </a>
+            <a
+              href="https://www.instagram.com/aideas_pvg/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="aiDEAS on Instagram"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a href="mailto:aideas@pvgcoet.ac.in" aria-label="Email aiDEAS">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6 9-6" />
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </footer>

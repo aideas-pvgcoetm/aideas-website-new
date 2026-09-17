@@ -1,120 +1,137 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import gsap from 'gsap';
 import Image from 'next/image';
-import i from "@/components/logo.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const logoRef = useRef<HTMLDivElement>(null);
-
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const letters = logoRef.current?.querySelectorAll('span');
-    if (letters) {
-      gsap.fromTo(
-        letters,
-        { y: -20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.07,
-          ease: 'back.out(1.7)',
-        }
-      );
-    }
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Split logo text into spans
-  const logo = 'aIDEAS'.split('').map((char, index) => (
-    <span key={index} className="inline-block">{char}</span>
-  ));
+  useEffect(() => {
+    const saved = (localStorage.getItem('aideas-theme') as 'dark' | 'light') || 'dark';
+    setTheme(saved);
+    document.documentElement.setAttribute('data-theme', saved);
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    localStorage.setItem('aideas-theme', next);
+    document.documentElement.setAttribute('data-theme', next);
+  };
+
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events' },
+    { name: 'About', path: '/about' },
+    { name: 'Members', path: '/members' },
+    { name: 'Contact Us', path: '/contact' },
+    { name: 'Alumni', path: '/alumni' },
+  ];
 
   return (
-    <header className="sticky z-20 top-0 w-full bg-black border-b-2 text-white px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* 🟢 Logo */}   <Link href="/">
-        <div className="flex items-center space-x-3">
+    <header className={isScrolled ? 'header-floating' : ''}>
+      <nav>
+        <Link href="/" className="brand" aria-label="aiDEAS Home">
           <Image
-            src={i}
-            alt="aIDEAS Logo"
-            width={40}
-            height={40}
-            className="bg-white rounded-full border border-white"
+            src="/assets/img/logo-icon.png"
+            alt="aiDEAS logo"
+            width={42}
+            height={42}
+            className="rounded-full shadow-md shrink-0"
           />
-          <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-sky-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-gradient-text bg-[length:300%] brightness-100">
-            {logo}
-          </div>
-        </div>
+          <span className="brand-name">
+            <span className="ai">aI</span>
+            <span className="deas">DEAS</span>
+          </span>
         </Link>
 
-        {/* 📱 Mobile toggle */}
-        <button className="md:hidden focus:outline-none" onClick={toggleMenu}>
-          {isOpen ? <FaTimes /> : <FaBars />}
-        </button>
+        <div className={`navlinks ${isOpen ? 'open' : ''}`}>
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              onClick={() => setIsOpen(false)}
+            >
+              {link.name}
+            </Link>
+          ))}
+          {/* Achievements inside mobile sidebar toggle section */}
+          <div className="nav-mobile-action">
+            <button
+              className="btn btn-ghost nav-mobile-achievements"
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label="Achievements"
+            >
+              Achievements
+            </button>
+          </div>
+        </div>
 
-        {/* 🔗 Desktop Links */}
-        <nav className="hidden md:flex space-x-6 text-sm">
-  {[
-    { name: "Home", path: "/" },
-    { name: "Events", path: "/events" },
-    { name: "About", path: "/about" },
-    { name: "Members", path: "/members" },
-    { name: "Contact Us", path: "/contact" },
-  ].map((item) => (
-    <Link
-      key={item.path}
-      href={item.path}
-      className="relative text-white after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full"
-    >
-      {item.name}
-    </Link>
-  ))}
-</nav>
+        <div className="nav-cta">
+          {/* Theme toggle */}
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            style={{ opacity: mounted ? 1 : 0 }}
+          >
+            {theme === 'dark' ? (
+              /* Sun icon */
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            ) : (
+              /* Moon icon */
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
+          </button>
 
-      </div>
+          {/* Desktop Achievements button (hidden on mobile) */}
+          <button
+            className="btn btn-ghost nav-achievements-desktop"
+            type="button"
+            onClick={() => {}}
+            aria-label="Achievements"
+          >
+            Achievements
+          </button>
 
-      {/* 📱 Mobile Nav */}
-      {isOpen && (
-       <div className="absolute top-16 right-0 w-1/2 z-50 bg-black px-6 py-4 flex flex-col items-center space-y-4 text-sm border-t border-zinc-700">
-
-  {/* Single reusable link block */}
-  <div className="w-full flex justify-center hover:bg-zinc-800 hover:border-b-2 hover:border-b-cyan-400   py-2 rounded">
-    <Link href="/" onClick={() => setIsOpen(false)} className="text-white">
-      Home
-    </Link>
-  </div>
-
-  <div className="w-full flex justify-center hover:bg-zinc-800 py-2 hover:border-b-2 hover:border-b-cyan-400 rounded">
-    <Link href="/events" onClick={() => setIsOpen(false)} className="text-white">
-      Events
-    </Link>
-  </div>
-
-  <div className="w-full flex justify-center hover:bg-zinc-800  hover:border-b-2 hover:border-b-cyan-400 py-2 rounded">
-    <Link href="/about" onClick={() => setIsOpen(false)} className="text-white">
-      About
-    </Link>
-  </div>
-   <div className="w-full flex justify-center hover:bg-zinc-800 hover:border-b-2 hover:border-b-cyan-400 py-2 rounded">
-    <Link href="/members" onClick={() => setIsOpen(false)} className="text-white">
-      Members
-    </Link>
-  </div>
-
-  <div className="w-full flex justify-center hover:bg-zinc-800  hover:border-b-2 hover:border-b-cyan-400 py-2 rounded">
-    <Link href="/contact" onClick={() => setIsOpen(false)} className="text-white">
-      Contact
-    </Link>
-  </div>
-
-</div>
-
-      )}
+          <button
+            className={`burger ${isOpen ? 'open' : ''}`}
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </nav>
     </header>
   );
 }

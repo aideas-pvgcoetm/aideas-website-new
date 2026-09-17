@@ -1,15 +1,17 @@
-'use client';
-
 import Hero from "@/components/Hero";
-import AnimatedBackground from "@/components/AnimatedBackground";
+import ZigzagSection from "@/components/home/ZigzagSection";
+import StatsSection from "@/components/home/StatsSection";
+import TestimonialsSection from "@/components/home/TestimonialsSection";
+import AboutOverviewSection from "@/components/home/AboutOverviewSection";
 
 export default function Home() {
   return (
-    <div className="relative overflow-hidden bg-black text-white">
-      <AnimatedBackground />
-      <div className="relative z-10">
-        <Hero />
-      </div>
-    </div>
+    <main className="page-main relative overflow-hidden">
+      <Hero />
+      <ZigzagSection />
+      <StatsSection />
+      <TestimonialsSection />
+      <AboutOverviewSection />
+    </main>
   );
 }
