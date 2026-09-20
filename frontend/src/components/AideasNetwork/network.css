@@ -1,0 +1,73 @@
+/* Custom CSS for aIDEAS Team Network Graph - Smooth 60fps Performance & Black Theme */
+
+.react-flow__pane {
+  background: #050505 !important;
+}
+
+/* Dotted Connecting Lines with Continuous Flowing Dash Animation */
+@keyframes edgeDash {
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.react-flow__edge-path {
+  stroke: rgba(59, 130, 246, 0.75) !important;
+  stroke-width: 2.5px !important;
+  stroke-dasharray: 6 6 !important;
+  animation: edgeDash 20s linear infinite;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+}
+
+.react-flow__edge.highlighted .react-flow__edge-path {
+  stroke: rgba(96, 165, 250, 0.95) !important;
+  stroke-width: 3.5px !important;
+  stroke-dasharray: 8 8 !important;
+}
+
+.react-flow__edge.dimmed {
+  opacity: 0.12 !important;
+}
+
+/* Node Styling & Hardware Accelerated Smooth Transitions */
+.network-node-wrapper {
+  transform-gpu: translate3d(0,0,0);
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.network-node-wrapper.dimmed {
+  opacity: 0.18 !important;
+  filter: grayscale(85%) blur(1px);
+  pointer-events: none;
+}
+
+.network-node-wrapper.highlighted {
+  opacity: 1 !important;
+  filter: none !important;
+  z-index: 100 !important;
+}
+
+/* Custom Handles styling */
+.react-flow__handle {
+  width: 7px !important;
+  height: 7px !important;
+  background-color: #3b82f6 !important;
+  border: 1.5px solid #050505 !important;
+  opacity: 0.8;
+}
+
+@keyframes timerProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-timer-progress {
+  animation: timerProgress 3000ms linear forwards;
+}
