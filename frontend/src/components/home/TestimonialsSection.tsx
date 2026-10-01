@@ -3,15 +3,8 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import SectionHeading from "@/components/ui/SectionHeading";
-
-interface Testimonial {
-  name: string;
-  role: string;
-  quote: string;
-  image: string;
-  objectPosition?: string;
-  accent: "cyan" | "purple" | "gradient";
-}
+import LeadershipTestimonial from "./LeadershipTestimonial";
+import { TestimonialSlider, type Review } from "@/components/ui/testimonial-slider";
 
 export default function TestimonialsSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -21,41 +14,73 @@ export default function TestimonialsSection() {
     margin: "0px 0px -40px 0px",
   });
 
-  const testimonials: Testimonial[] = [
+  const reviews: Review[] = [
     {
-      name: "SRAJAL KUMAR MISHRA",
-      role: "3rd Year · Frontend",
+      id: 1,
+      name: "Srajal Kumar Mishra",
+      shortName: "Srajal",
+      designation: "Core Team Member · Frontend",
       quote:
         "Working on the frontend at aiDEAS gave me the opportunity to turn ideas into interfaces that people could actually use. Building the website and working alongside the rest of the team taught me how much better a product becomes when design, development and collaboration happen together.",
-      image: "/assets/testimonials/srajal-kumar-mishra.jpg",
-      objectPosition: "center 30%",
-      accent: "cyan",
+      imageSrc: "/assets/testimonials/srajal-kumar-mishra.jpg",
+      thumbnailSrc: "/assets/testimonials/srajal-kumar-mishra.jpg",
     },
     {
-      name: "PRANAV PARDESHI",
-      role: "3rd Year · Backend",
+      id: 2,
+      name: "Pranav Pardeshi",
+      shortName: "Pranav",
+      designation: "Core Team Member · Backend",
       quote:
         "Working on the backend at aiDEAS pushed me beyond writing individual pieces of code. I got to work on the systems and logic that power the projects, while learning how to build something reliable that connects smoothly with what the users see.",
-      image: "/assets/testimonials/pranav-pardeshi.jpg",
-      objectPosition: "center 22%",
-      accent: "purple",
+      imageSrc: "/assets/testimonials/pranav-pardeshi.jpg",
+      thumbnailSrc: "/assets/testimonials/pranav-pardeshi.jpg",
     },
     {
-      name: "SAANIDHI GADE",
-      role: "3rd Year · Joint Head · Former Member",
+      id: 3,
+      name: "Saanidhi Gade",
+      shortName: "Saanidhi",
+      designation: "Technical Head",
       quote:
         "I joined aiDEAS as a member and eventually took on the responsibility of Joint Head. Being part of that journey taught me how much a student community can grow through collaboration, shared knowledge and people willing to take responsibility for making things happen.",
-      image: "/assets/testimonials/saanidhi-gade.jpg",
-      objectPosition: "center 18%",
-      accent: "gradient",
+      imageSrc: "/assets/testimonials/saanidhi-gade.jpg",
+      thumbnailSrc: "/assets/testimonials/saanidhi-gade.jpg",
+      socials: {
+        instagram: "https://www.instagram.com/_.saanidhi._",
+        linkedin: "https://www.linkedin.com/in/saanidhi-gade/",
+        email: "gadesaanidhi@gmail.com",
+      },
+    },
+    {
+      id: 4,
+      name: "Ganesh Rokade",
+      shortName: "Ganesh",
+      designation: "Sponsorship & PR Head",
+      quote:
+        "Representing aiDEAS has taught me to start conversations, communicate our ideas clearly, and build relationships beyond campus. As Sponsorship & PR Head, I enjoy connecting people who believe in student potential with a team ready to turn that support into meaningful opportunities.",
+      imageSrc: "/assets/testimonials/ganesh-rokade.jpg",
+      thumbnailSrc: "/assets/testimonials/ganesh-rokade.jpg",
+      socials: {
+        instagram: "https://www.instagram.com/justfree2006?stkn=NGhzdHNraXhyM2lw",
+        linkedin: "https://www.linkedin.com/in/ganeshrokade06?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        email: "rokadeganesh701@gmail.com",
+      },
+    },
+    {
+      id: 5,
+      name: "Omkar Mulage",
+      shortName: "Omkar",
+      designation: "Documentation & Editorial",
+      quote:
+        "Every project and event has something worth sharing. At aiDEAS, I enjoy turning the team’s ideas and experiences into clear stories and useful documentation. It’s rewarding to know that what we record today can help the next batch learn, build, and take things further.",
+      imageSrc: "/assets/testimonials/omkar-mulage.jpg",
+      thumbnailSrc: "/assets/testimonials/omkar-mulage.jpg",
+      socials: {
+        instagram: "https://www.instagram.com/omkarmulage_?stkn=bjU3cTN3NjVyNGNj",
+        linkedin: "https://www.linkedin.com/in/omkar-mulage-708b77320?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        email: "omkarmulage9@gmail.com",
+      },
     },
   ];
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-    e.currentTarget.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-  };
 
   return (
     <section ref={sectionRef} className="section-pad ambient-panel">
@@ -72,113 +97,35 @@ export default function TestimonialsSection() {
           />
         </motion.div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          {testimonials.map((t, i) => {
-            const isCyan = t.accent === "cyan";
-            const isPurple = t.accent === "purple";
+        {/* Featured Leadership Testimonial (General Secretaries Carousel) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-8 mb-2"
+        >
+          <LeadershipTestimonial />
+        </motion.div>
 
-            return (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 22 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-                transition={{
-                  duration: 0.65,
-                  delay: 0.15 + i * 0.14,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                onMouseMove={handleMouseMove}
-                className={`testimonial-card relative rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#0d121c] p-6 sm:p-7 flex flex-col justify-between overflow-hidden group transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[rgba(255,255,255,0.22)] shadow-[0_24px_50px_-24px_rgba(0,0,0,0.85)] ${
-                  isCyan
-                    ? "hover:shadow-[0_22px_45px_-18px_rgba(56,209,255,0.22)]"
-                    : isPurple
-                    ? "hover:shadow-[0_22px_45px_-18px_rgba(176,107,255,0.22)]"
-                    : "hover:shadow-[0_22px_45px_-18px_rgba(56,209,255,0.16),0_22px_45px_-18px_rgba(176,107,255,0.16)]"
-                }`}
-              >
-                {/* Subtle static top-corner accent sheen */}
-                <div
-                  className={`pointer-events-none absolute -top-20 -right-20 w-44 h-44 rounded-full ${
-                    isCyan
-                      ? "bg-[radial-gradient(circle,rgba(56,209,255,0.08)_0%,transparent_70%)]"
-                      : isPurple
-                      ? "bg-[radial-gradient(circle,rgba(176,107,255,0.07)_0%,transparent_70%)]"
-                      : "bg-[radial-gradient(circle,rgba(56,209,255,0.06)_0%,transparent_70%)]"
-                  }`}
-                  aria-hidden="true"
-                />
-
-                {/* Interactive cursor-following atmospheric light */}
-                <div
-                  className={`pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                    isCyan
-                      ? "bg-[radial-gradient(360px_circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(56,209,255,0.09),transparent_65%)]"
-                      : isPurple
-                      ? "bg-[radial-gradient(360px_circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(176,107,255,0.09),transparent_65%)]"
-                      : "bg-[radial-gradient(360px_circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(56,209,255,0.07),rgba(176,107,255,0.06)_40%,transparent_65%)]"
-                  }`}
-                  aria-hidden="true"
-                />
-
-                {/* Top Row: aiDEAS Member badge (Number labels completely removed) */}
-                <div className="testimonial-divider flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-3 mb-4">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-mono tracking-wider text-[var(--text-faint)] uppercase">
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${
-                        isCyan
-                          ? "bg-[var(--cyan-bright)] shadow-[0_0_6px_rgba(56,209,255,0.5)]"
-                          : isPurple
-                          ? "bg-[var(--purple-bright)] shadow-[0_0_6px_rgba(176,107,255,0.5)]"
-                          : "bg-gradient-to-r from-[var(--cyan-bright)] to-[var(--purple-bright)] shadow-[0_0_6px_rgba(56,209,255,0.5)]"
-                      }`}
-                    />
-                    aiDEAS Member
-                  </span>
-                </div>
-
-                {/* Testimonial Quotation */}
-                <p className="testimonial-quote text-[14.5px] sm:text-[15px] text-[#ccd3df] leading-[1.72] font-normal my-2 tracking-[0.01em] flex-1">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-
-                {/* Subtle Divider */}
-                <div className="testimonial-divider w-full h-[1px] bg-[rgba(255,255,255,0.06)] my-5" />
-
-                {/* Author Info Row */}
-                <div className="flex items-center gap-3.5">
-                  <motion.div
-                    initial={{ scale: 0.88, opacity: 0 }}
-                    animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0.88, opacity: 0 }}
-                    transition={{
-                      duration: 0.5,
-                      delay: 0.25 + i * 0.14,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="shrink-0"
-                  >
-                    <img
-                      src={t.image}
-                      alt={t.name}
-                      loading="lazy"
-                      className="w-12 h-12 rounded-full object-cover border border-[rgba(255,255,255,0.12)] shadow-[0_0_14px_rgba(0,0,0,0.6)]"
-                      style={{ objectPosition: t.objectPosition || "center center" }}
-                    />
-                  </motion.div>
-
-                  <div className="min-w-0">
-                    <div className="testimonial-author font-display font-bold text-[13.5px] sm:text-[14px] text-white tracking-wide truncate">
-                      {t.name}
-                    </div>
-                    <div className="text-[11.5px] font-mono text-[var(--text-faint)] mt-0.5 truncate">
-                      {t.role}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+        {/* Subtle Divider between Leadership and Community Testimonials */}
+        <div className="pt-8 pb-3 border-t border-[rgba(255,255,255,0.06)] mt-8 flex items-center justify-between">
+          <span className="text-xs font-mono tracking-widest text-[var(--text-faint,#626b78)] uppercase font-semibold">
+            COMMUNITY VOICES
+          </span>
+          <span className="text-[11px] font-mono tracking-widest text-[var(--text-faint,#626b78)] uppercase">
+            05 PERSPECTIVES
+          </span>
         </div>
+
+        {/* 5-Person Editorial Voice Rail */}
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
+          transition={{ duration: 0.65, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-4"
+        >
+          <TestimonialSlider reviews={reviews} />
+        </motion.div>
       </div>
     </section>
   );
