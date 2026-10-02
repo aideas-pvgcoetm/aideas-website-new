@@ -348,7 +348,7 @@ export default function SpotlightPage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-purple-950/80 text-purple-300 border border-purple-800/50">
+                    <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-cyan-950/40 text-cyan-400 border border-cyan-800/30">
                       Academic Year 2025-26
                     </span>
                     <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40">
@@ -395,6 +395,7 @@ export default function SpotlightPage() {
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import NeuralBackground from '@/components/ui/NeuralBackground';
 
 // Achievements Data Structure
 const achievementsData = [
@@ -404,9 +405,15 @@ const achievementsData = [
     class: 'SE',
     year: '2025-26',
     batch: '2028 (SE)',
+    date: 'Mar 2025',
     title: '3rd Position at PICT IMPETUS Project Exhibition',
     details: 'Domain: Digital Image/Speech/Video Processing. Project: VoiceShield - A Real-Time Hybrid AI Framework for Detecting Generative Voice-Cloning and Scam Intent.',
-    badge: 'Exhibition Winner'
+    badge: 'Exhibition Winner',
+    images: [
+      '/achievements/impetus-ceremony.jpg',
+      '/achievements/impetus-group.jpg',
+      '/achievements/impetus-certificates.jpg',
+    ]
   },
   {
     id: 2,
@@ -414,9 +421,13 @@ const achievementsData = [
     class: 'SE',
     year: '2025-26',
     batch: '2028 (SE)',
+    date: 'Oct 2025',
     title: 'Bhagirath Karandak Award',
     details: 'Team member (Actor) in award-winning performance at the prestigious Purushottam Karandak Competition.',
-    badge: 'Cultural'
+    badge: 'Cultural',
+    images: [
+      '/achievements/bhagirath-karandak.jpg',
+    ]
   },
   {
     id: 3,
@@ -424,9 +435,14 @@ const achievementsData = [
     class: 'SE',
     year: '2025-26',
     batch: '2028 (SE)',
+    date: 'Nov 2025',
     title: 'Winners - VOIS INNOVATION MARATHON 2.0',
     details: 'Built a centralized urban mobility solution helping users select optimized routes to solve urban commute problems.',
-    badge: 'Hackathon Winner'
+    badge: 'Hackathon Winner',
+    images: [
+      '/achievements/vois-award-ceremony.jpg',
+      '/achievements/vois-cheque.jpg',
+    ]
   },
   {
     id: 4,
@@ -434,9 +450,13 @@ const achievementsData = [
     class: 'SE',
     year: '2025-26',
     batch: '2028 (SE)',
+    date: 'Jan 2025',
     title: '2nd Rank - IBM SkillsBuild Hacknexus 2025',
     details: 'Secured 2nd rank at IBM SkillsBuild Hacknexus 2025 powered by EDUNET.',
-    badge: 'Hackathon Winner'
+    badge: 'Hackathon Winner',
+    images: [
+      '/achievements/ibm-hacknexus.jpg',
+    ]
   },
   {
     id: 5,
@@ -444,37 +464,379 @@ const achievementsData = [
     class: 'SE',
     year: '2025-26',
     batch: '2028 (SE)',
+    date: 'Feb 2026',
     title: '3rd Rank - HardHack Forge Hackathon 2026',
     details: 'Developed a Smart Mirror AI Assistant with seamless hardware–ML integration at PCCOE.',
-    badge: 'Hackathon Winner'
+    badge: 'Hackathon Winner',
+    images: [
+      '/achievements/hardhack-pccoe.jpg',
+      '/achievements/hardhack-certificate.jpg',
+    ]
   }
 ];
 
-// Timeline Events Data
+// Lightbox Component
+function Lightbox({
+  images,
+  startIndex,
+  onClose,
+}: {
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+
+  const prev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrent((c) => (c - 1 + images.length) % images.length);
+  };
+  const next = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrent((c) => (c + 1) % images.length);
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="lightbox"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 backdrop-blur-md"
+        onClick={onClose}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-xl transition-all"
+        >
+          ✕
+        </button>
+
+        {/* Counter */}
+        {images.length > 1 && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-gray-400 bg-black/50 px-3 py-1 rounded-full">
+            {current + 1} / {images.length}
+          </div>
+        )}
+
+        {/* Prev */}
+        {images.length > 1 && (
+          <button
+            onClick={prev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white text-lg transition-all"
+          >
+            ‹
+          </button>
+        )}
+
+        {/* Image */}
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.25 }}
+          className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <img
+            src={images[current]}
+            alt={`Photo ${current + 1}`}
+            className="object-contain max-h-[85vh] max-w-[90vw] rounded-2xl"
+          />
+        </motion.div>
+
+        {/* Next */}
+        {images.length > 1 && (
+          <button
+            onClick={next}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white text-lg transition-all"
+          >
+            ›
+          </button>
+        )}
+
+        {/* Dot Indicators */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  i === current ? 'bg-cyan-400 scale-125' : 'bg-white/30'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// Timeline Events Data — newest at top, oldest at bottom
 const timelineEvents = [
   {
-    date: 'Sep 2025',
-    title: 'Think-Prompt-Build Event',
+    date: '24th Oct 2026',
+    year: '2026',
+    title: 'NEUROVERSE Ideathon 2026',
+    description: 'A one-day student ideathon focused on practical ideas built around AI and data.',
+    longDescription: (
+      <div className="space-y-4">
+        <p>Teams from colleges across Pune will develop, refine and present solutions with mentoring, evaluation and prizes as part of a focused innovation experience.</p>
+        <div>
+          <strong className="text-[var(--text)]">Themes:</strong>
+          <ul className="list-disc pl-5 mt-1 space-y-1">
+            <li>01 INTELLIGENCE & INNOVATION IN HEALTHCARE</li>
+            <li>02 SMART CITIES & SUSTAINABLE DEVELOPMENT</li>
+            <li>03 OPEN INNOVATION</li>
+          </ul>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          <div className="bg-[var(--bg-soft)] p-3 rounded-xl border border-[var(--border)]">
+            <span className="block text-xs font-semibold text-[var(--cyan-bright)] uppercase tracking-wider mb-1">Time & Venue</span>
+            <span className="text-[var(--text)] text-sm">10:00 AM - 5:00 PM<br/>PVG’s COET&M, Pune</span>
+          </div>
+          <div className="bg-[var(--bg-soft)] p-3 rounded-xl border border-[var(--border)]">
+            <span className="block text-xs font-semibold text-[var(--purple-bright)] uppercase tracking-wider mb-1">Participation</span>
+            <span className="text-[var(--text)] text-sm">50+ teams (3-4 members)<br/>Open to all colleges</span>
+          </div>
+        </div>
+        <div className="p-3 rounded-xl border mt-4" style={{ background: 'var(--panel-grad)', borderColor: 'var(--cyan-bright)' }}>
+          <span className="block text-xs font-bold text-[var(--text)] uppercase tracking-wider mb-1 flex items-center gap-2">
+            🏆 Prize Pool
+          </span>
+          <span className="text-[var(--cyan-bright)] font-semibold">Rs. 15,000+ in cash prizes, plus goodies</span>
+        </div>
+      </div>
+    ),
+    photos: [],
+    status: 'Upcoming'
+  },
+  {
+    date: '14th Sep 2025',
+    year: '2025',
+    title: 'Think-Prompt-Build',
     description: 'Flagship prompt engineering and rapid AI prototyping competition organized by AiDeas.',
+    longDescription: 'Think-Prompt-Build challenged participants to leverage modern generative AI models and intelligent prompt engineering to rapidly architect and prototype functioning real-world solutions. Teams competed across domains including Accessibility, Sustainability, Education, and Productivity to demonstrate high-velocity AI craftsmanship.',
+    photos: ['/code.png'],
     status: 'Latest'
   },
   {
-    date: 'Dec 2025',
-    title: 'Event 2 (Upcoming)',
-    description: 'Upcoming hands-on workshop on generative AI agents and model evaluation.',
-    status: 'Upcoming'
+    date: '2nd April 2025',
+    year: '2025',
+    title: 'Code Clash',
+    description: 'A competitive programming showdown that attracted the brightest minds on campus.',
+    longDescription: 'Code Clash is our flagship annual coding competition, attracting the brightest minds to solve a series of complex algorithmic problems. Contestants competed in a high-stakes environment to write efficient and accurate code under tight deadlines, battling for prizes and bragging rights as the top coder on campus.',
+    photos: ['/code.png'],
+    status: 'Past'
   },
   {
-    date: 'Mar 2026',
-    title: 'Event 3 (Upcoming)',
-    description: 'National level hackathon bringing together AI innovators and builders.',
-    status: 'Upcoming'
-  }
+    date: '5th Jan 2024',
+    year: '2024',
+    title: 'Flip the Code',
+    description: 'An unconventional coding challenge where participants decoded reversed logic.',
+    longDescription: `"Flip the Code" turned traditional coding competitions on their head. Participants were given a working piece of code and its output, but with the logic flipped or reversed. Their task was to debug and reconstruct the original logic, testing their understanding of code flow and problem-solving from a different perspective.`,
+    photos: ['/FLIP.jpg'],
+    status: 'Past'
+  },
 ];
+
+type TimelineEvent = (typeof timelineEvents)[0];
+
+// Event Detail Modal
+function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="event-modal-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[500] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.93, y: 24 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.93, y: 24 }}
+          transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+          className="relative max-w-lg w-full rounded-3xl overflow-hidden shadow-2xl"
+          style={{ background: 'var(--panel)', border: '1px solid var(--border)' }}
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all text-sm"
+          >
+            ✕
+          </button>
+
+          {/* Photo */}
+          {event.photos && event.photos.length > 0 && (
+            <div className="w-full h-52 overflow-hidden relative">
+              <img src={event.photos[0]} alt={event.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--panel), transparent)' }} />
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="p-6">
+            {/* Title + badge */}
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h2 className="text-xl font-extrabold text-[var(--text)] leading-snug" style={{ fontFamily: 'var(--font-display)' }}>{event.title}</h2>
+              <span className="shrink-0 text-[11px] font-semibold px-2.5 py-0.5 rounded-full mt-1" style={event.status === 'Latest' ? { background: 'rgba(56,209,255,0.1)', color: 'var(--cyan-bright)', border: '1px solid rgba(56,209,255,0.3)' } : { background: 'rgba(176,107,255,0.08)', color: 'var(--purple-bright)', border: '1px solid rgba(176,107,255,0.25)' }}>
+                {event.status}
+              </span>
+            </div>
+            {/* Date */}
+            <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
+              {event.date}
+            </span>
+            {/* Detailed description */}
+            <div className="mt-4 text-[var(--text-dim)] text-sm leading-relaxed">{event.longDescription}</div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// Achievement Detail Modal
+function AchievementModal({
+  item,
+  onClose,
+}: {
+  item: (typeof achievementsData)[0];
+  onClose: () => void;
+}) {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="modal-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[500] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: 30 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          className="relative rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          style={{ background: 'var(--panel)', border: '1px solid var(--border)' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all"
+          >
+            ✕
+          </button>
+
+          {/* Photo Gallery */}
+          {item.images && item.images.length > 0 && (
+            <div className="w-full h-56 sm:h-64 overflow-hidden rounded-t-3xl relative group">
+              <img
+                src={item.images[0]}
+                alt={item.title}
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => setLightboxIndex(0)}
+              />
+              {/* Thumbnail row */}
+              {item.images.length > 1 && (
+                <div className="absolute bottom-3 left-3 flex gap-2">
+                  {item.images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setLightboxIndex(i)}
+                      className="w-12 h-12 rounded-lg overflow-hidden border-2 transition-all shadow"
+                      style={{ borderColor: 'var(--border)' }}
+                      onMouseEnter={e => (e.currentTarget.style.borderColor='var(--cyan-bright)')}
+                      onMouseLeave={e => (e.currentTarget.style.borderColor='var(--border)')}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="p-6 sm:p-8">
+            {/* Badges */}
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
+              <span className="px-2.5 py-1 text-xs font-semibold rounded-md" style={{ background: 'rgba(56,209,255,0.1)', color: 'var(--cyan-bright)', border: '1px solid rgba(56,209,255,0.3)' }}>
+                Academic Year {item.year}
+              </span>
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded border" style={{ background: 'rgba(56,209,255,0.15)', color: 'var(--cyan-bright)', borderColor: 'rgba(56,209,255,0.4)' }}>
+                {item.batch}
+              </span>
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded border ml-auto" style={{ background: 'rgba(176,107,255,0.15)', color: 'var(--purple-bright)', borderColor: 'rgba(176,107,255,0.4)' }}>
+                {item.badge}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[var(--text)] mb-4 leading-snug" style={{ fontFamily: 'var(--font-display)' }}>
+              {item.title}
+            </h2>
+
+            {/* Details */}
+            <p className="text-[var(--text-dim)] text-sm leading-relaxed mb-6">
+              {item.details}
+            </p>
+
+            {/* Students */}
+            <div className="pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-xs font-semibold text-[var(--text-faint)] uppercase tracking-wider block mb-3">
+                Student / Team:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {item.students.map((student, idx) => (
+                  <span
+                    key={idx}
+                    className="text-sm font-medium text-[var(--text)] px-3 py-1.5 rounded-lg border transition-colors"
+                    style={{ background: 'var(--bg-soft)', borderColor: 'var(--border)' }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor='var(--cyan-bright)')}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor='var(--border)')}
+                  >
+                    {student}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Lightbox inside modal */}
+      {lightboxIndex !== null && item.images && (
+        <Lightbox
+          images={item.images}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default function SpotlightPage() {
   const [activeTab, setActiveTab] = useState<'events' | 'achievements'>('events');
   const [selectedBatch, setSelectedBatch] = useState<string>('All');
+  const [selectedAchievement, setSelectedAchievement] = useState<(typeof achievementsData)[0] | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<(typeof timelineEvents)[0] | null>(null);
 
   const batches = ['All', '2028 (SE)', '2027 (TE)', '2029 (FE)'];
 
@@ -483,46 +845,43 @@ export default function SpotlightPage() {
     : achievementsData.filter(item => item.batch === selectedBatch);
 
   return (
-    <div className="relative min-h-screen bg-[#030308] text-white pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background Radial Glow Effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-purple-900/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="relative min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden ambient-panel">
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Title Header */}
-        <div className="text-center mb-12">
+        <div className="section-head mb-12">
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent"
+            className="section-heading-title"
           >
-            Spotlight
+            <span className="grad-text">Spotlight</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-3 text-gray-400 max-w-2xl mx-auto text-base sm:text-lg"
+            className="section-heading-description mx-auto"
           >
             Highlighting our key historical events, upcoming initiatives, and major student achievements.
           </motion.p>
 
           {/* Tab Switcher */}
           <div className="flex justify-center mt-8">
-            <div className="bg-[#0A0B16] p-1.5 rounded-full border border-gray-800/80 shadow-inner flex gap-2">
+            <div className="p-1.5 rounded-full border flex gap-2" style={{ background: 'var(--panel)', borderColor: 'var(--border)' }}>
               <button
                 onClick={() => setActiveTab('events')}
                 className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                   activeTab === 'events'
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-black'
+                    : 'text-[var(--text-dim)] hover:text-[var(--text)]'
                 }`}
               >
                 {activeTab === 'events' && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg shadow-purple-500/25"
+                    className="absolute inset-0 rounded-full" style={{ background: 'var(--grad)', boxShadow: '0 0 18px rgba(56,209,255,0.3)' }}
                     transition={{ type: "spring", stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -533,14 +892,14 @@ export default function SpotlightPage() {
                 onClick={() => setActiveTab('achievements')}
                 className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                   activeTab === 'achievements'
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-black'
+                    : 'text-[var(--text-dim)] hover:text-[var(--text)]'
                 }`}
               >
                 {activeTab === 'achievements' && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg shadow-purple-500/25"
+                    className="absolute inset-0 rounded-full" style={{ background: 'var(--grad)', boxShadow: '0 0 18px rgba(56,209,255,0.3)' }}
                     transition={{ type: "spring", stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -553,58 +912,125 @@ export default function SpotlightPage() {
         {/* EVENTS TAB CONTENT */}
         {activeTab === 'events' && (
           <div className="mt-12 max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-center mb-14 text-cyan-300 tracking-wide">
-              Key Historical Milestones & Upcoming Events
+            <h2 className="text-2xl font-bold text-center mb-14 tracking-wide text-[var(--cyan-bright)]" style={{ fontFamily: 'var(--font-display)' }}>
+              Key Historical Milestones & Events
             </h2>
 
             {/* Central Timeline Container */}
             <div className="relative">
               {/* Central Vertical Line */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500 via-purple-600 to-blue-800 rounded-full shadow-[0_0_12px_rgba(168,85,247,0.5)] hidden md:block" />
-              {/* Fallback left line for mobile screens */}
-              <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500 via-purple-600 to-blue-800 rounded-full md:hidden" />
+              <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-px hidden md:block" style={{ background: 'var(--grad)', boxShadow: '0 0 12px rgba(176,107,255,0.5)' }} />
+              {/* Mobile left line */}
+              <div className="absolute left-6 top-0 bottom-0 w-px md:hidden" style={{ background: 'var(--grad)' }} />
 
-              <div className="space-y-12 md:space-y-16">
+              <div className="space-y-16 md:space-y-20">
                 {timelineEvents.map((event, index) => {
                   const isEven = index % 2 === 0;
 
                   return (
-                    <div key={index} className="relative flex flex-col md:flex-row items-center">
+                    <div key={index} className="relative flex flex-col md:flex-row items-start md:items-center">
                       {/* Central Glowing Orb Node */}
-                      <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 z-20 w-8 h-8 rounded-full border-2 border-purple-400 bg-[#060713] flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.8)]">
-                        <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse" />
+                      <div className="absolute left-6 md:left-1/2 -translate-x-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center" style={{ border: '2px solid var(--cyan-bright)', background: 'var(--bg)', boxShadow: '0 0 16px rgba(56,209,255,0.6)' }}>
+                        <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: 'var(--cyan-bright)' }} />
                       </div>
 
                       {/* Content Card Wrapper */}
-                      <div className={`w-full md:w-1/2 pl-14 md:pl-0 ${isEven ? 'md:pr-12 md:text-right' : 'md:pl-12 md:ml-auto'}`}>
-                        <motion.div
-                          initial={{ opacity: 0, x: isEven ? -60 : 60 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true, margin: "-50px" }}
-                          transition={{ duration: 0.5, delay: index * 0.15 }}
-                          whileHover={{ scale: 1.03, y: -4 }}
-                          className="bg-[#090A15]/90 backdrop-blur-md border border-gray-800/90 rounded-2xl p-6 shadow-lg hover:border-purple-500/60 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] transition-all duration-300"
+                      <div className={`w-full md:w-[46%] pl-14 md:pl-0 ${
+                        isEven ? 'md:pr-10 md:mr-auto' : 'md:pl-10 md:ml-auto'
+                      }`}>
+                        <div
+                          className="timeline-card group backdrop-blur-md rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+                          style={{
+                            background: 'var(--panel)',
+                            border: '1px solid var(--border)',
+                            transform: isEven ? 'translateX(-48px)' : 'translateX(48px)',
+                            opacity: 0,
+                            transition: `opacity 0.5s ease ${index * 0.15}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${index * 0.15}s, border-color 0.2s ease, box-shadow 0.2s ease`
+                          }}
+                          ref={(el) => {
+                            if (el) {
+                              const isMobile = () => window.innerWidth < 768;
+                              const initialTransform = isMobile()
+                                ? 'translateY(40px)'
+                                : isEven ? 'translateX(-48px)' : 'translateX(48px)';
+                              el.style.transform = initialTransform;
+                              el.style.opacity = '0';
+                              const obs = new IntersectionObserver(([e]) => {
+                                if (e.isIntersecting) {
+                                  el.style.opacity = '1';
+                                  el.style.transform = isMobile() ? 'translateY(0)' : 'translateX(0)';
+                                  obs.disconnect();
+                                }
+                              }, { threshold: 0.12 });
+                              obs.observe(el);
+                            }
+                          }}
+                          onClick={() => setSelectedEvent(event)}
+                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'var(--cyan-bright)'; el.style.boxShadow = '0 0 30px rgba(56,209,255,0.12)'; }}
+                          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'var(--border)'; el.style.boxShadow = ''; }}
                         >
-                          <div className={`flex flex-wrap items-center gap-2 mb-3 ${isEven ? 'md:justify-end' : 'justify-start'}`}>
-                            <span className="text-sm font-bold text-purple-400 tracking-wider">
-                              {event.date}
-                            </span>
-                            <span className={`px-3 py-0.5 text-xs font-semibold rounded-full border ${
-                              event.status === 'Latest' 
-                                ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' 
-                                : 'bg-purple-500/10 text-purple-300 border-purple-500/30'
-                            }`}>
-                              {event.status}
-                            </span>
+                          {/* Card body — title, description, date */}
+                          <div className="p-5">
+                            <h3 className="text-lg font-bold text-[var(--text)] leading-snug mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+                              {event.title}
+                            </h3>
+                            <p className="text-[var(--text-dim)] text-sm leading-relaxed mb-3">
+                              {event.description}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
+                                {event.date}
+                              </span>
+                              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full" style={event.status === 'Latest' ? { background: 'rgba(56,209,255,0.1)', color: 'var(--cyan-bright)', border: '1px solid rgba(56,209,255,0.3)' } : { background: 'rgba(176,107,255,0.08)', color: 'var(--purple-bright)', border: '1px solid rgba(176,107,255,0.25)' }}>
+                                {event.status}
+                              </span>
+                            </div>
                           </div>
 
-                          <h3 className="text-xl font-bold text-white hover:text-cyan-300 transition-colors">
-                            {event.title}
-                          </h3>
-                          <p className="mt-2 text-gray-400 text-sm leading-relaxed">
-                            {event.description}
-                          </p>
-                        </motion.div>
+                          {/* Hover-reveal: photo + detail panel */}
+                          <div
+                            className="overflow-hidden"
+                            style={{ maxHeight: 0, transition: 'max-height 0.4s cubic-bezier(0.22,1,0.36,1)' }}
+                            ref={(el) => {
+                              if (!el) return;
+                              const card = el.closest('.timeline-card') as HTMLElement;
+                              if (!card) return;
+                              const show = () => { el.style.maxHeight = el.scrollHeight + 'px'; };
+                              const hide = () => { el.style.maxHeight = '0px'; };
+                              card.addEventListener('mouseenter', show);
+                              card.addEventListener('mouseleave', hide);
+
+                              // Expand on scroll for mobile
+                              const obs = new IntersectionObserver(([e]) => {
+                                if (window.innerWidth < 768) {
+                                  if (e.isIntersecting) {
+                                    show();
+                                  } else {
+                                    hide();
+                                  }
+                                }
+                              }, { rootMargin: '-15% 0px -15% 0px', threshold: 0 });
+                              obs.observe(card);
+                            }}
+                          >
+                            {/* Photo */}
+                            {event.photos && event.photos.length > 0 && (
+                              <div className="w-full h-40 overflow-hidden relative">
+                                <img src={event.photos[0]} alt={event.title} className="w-full h-full object-cover" />
+                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--panel), transparent)' }} />
+                              </div>
+                            )}
+                            {/* Detail text */}
+                            <div className="px-5 pb-5 pt-3 border-t" style={{ borderColor: 'var(--border)' }}>
+                              <div className="text-[var(--text-dim)] text-xs leading-relaxed">
+                                {event.longDescription}
+                              </div>
+                              <p className="mt-3 text-[11px] font-medium" style={{ color: 'var(--cyan-bright)' }}>
+                                Click to view full details →
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
@@ -619,16 +1045,15 @@ export default function SpotlightPage() {
           <div className="mt-8">
             {/* Batch Filter Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-              <span className="text-sm text-gray-400 font-medium mr-2">Filter Batch:</span>
+              <span className="text-sm text-[var(--text-dim)] font-medium mr-2">Filter Batch:</span>
               {batches.map((batch) => (
                 <button
                   key={batch}
                   onClick={() => setSelectedBatch(batch)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium border transition-all duration-200 ${
-                    selectedBatch === batch
-                      ? 'bg-purple-600 border-purple-500 text-white shadow-md shadow-purple-500/30'
-                      : 'bg-[#090A15] border-gray-800 text-gray-400 hover:text-white hover:border-gray-700'
-                  }`}
+                  className="px-4 py-1.5 rounded-lg text-sm font-medium border transition-all duration-200"
+                  style={selectedBatch === batch
+                    ? { background: 'var(--grad)', borderColor: 'transparent', color: 'black', boxShadow: '0 0 12px rgba(56,209,255,0.3)' }
+                    : { background: 'var(--panel)', borderColor: 'var(--border)', color: 'var(--text-dim)' }}
                 >
                   {batch}
                 </button>
@@ -636,63 +1061,75 @@ export default function SpotlightPage() {
             </div>
 
             {/* Achievements Grid */}
-            <motion.div 
-              layout
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <AnimatePresence>
                 {filteredAchievements.map((item) => (
                   <motion.div
                     key={item.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    whileHover={{ scale: 1.04, y: -6 }}
-                    className="bg-[#080914]/90 backdrop-blur-md border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between shadow-md hover:border-purple-500/50 hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    onClick={() => setSelectedAchievement(item)}
+                    className="backdrop-blur-md rounded-2xl overflow-hidden flex flex-col shadow-md cursor-pointer group" style={{ background: 'var(--panel)', border: '1px solid var(--border)', transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease' }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = 'translateY(-5px) scale(1.02)'; el.style.borderColor = 'var(--cyan-bright)'; el.style.boxShadow = '0 10px 30px rgba(56,209,255,0.12)'; }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ''; el.style.borderColor = 'var(--border)'; el.style.boxShadow = ''; }}
                   >
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-purple-950/80 text-purple-300 border border-purple-800/50">
-                          Academic Year 2025-26
-                        </span>
-                        <span className="text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-0.5 rounded border border-cyan-800/40">
-                          {item.batch}
+                    {/* Photo thumbnail */}
+                    <div className="relative w-full h-48 overflow-hidden" style={{ background: 'var(--bg-soft)' }}>
+                      {item.images && item.images.length > 0 ? (
+                        <img
+                          src={item.images[0]}
+                          alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[var(--text-faint)] text-4xl">
+                          🏆
+                        </div>
+                      )}
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'rgba(0,0,0,0.3)' }}>
+                        <span className="text-[var(--text)] text-xs px-4 py-1.5 rounded-full border font-medium" style={{ background: 'var(--header-bg)', borderColor: 'var(--border)' }}>
+                          View Details →
                         </span>
                       </div>
-
-                      <h3 className="text-lg font-bold text-white mb-2 leading-snug hover:text-cyan-300 transition-colors">
-                        {item.title}
-                      </h3>
-
-                      <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-4">
-                        {item.details}
-                      </p>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-800/80 mt-2">
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-2">
-                        Student / Team:
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.students.map((student, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs font-medium bg-[#111326] text-gray-200 px-2.5 py-1 rounded-md border border-gray-700/50 hover:border-purple-500/40 transition-colors"
-                          >
-                            {student}
-                          </span>
-                        ))}
-                      </div>
+                    {/* Minimal card info: title + date */}
+                    <div className="p-5 flex flex-col gap-1.5">
+                      <h3 className="text-base font-bold text-[var(--text)] leading-snug transition-colors" style={{ fontFamily: 'var(--font-display)' }} onMouseEnter={e => (e.currentTarget.style.color='var(--cyan-bright)')} onMouseLeave={e => (e.currentTarget.style.color='var(--text)')}>
+                        {item.title}
+                      </h3>
+                      {item.date && (
+                        <span className="font-mono text-[11px] px-2 py-0.5 rounded self-start" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
+                          {item.date}
+                        </span>
+                      )}
                     </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Achievement Detail Modal */}
+      {selectedAchievement && (
+        <AchievementModal
+          item={selectedAchievement}
+          onClose={() => setSelectedAchievement(null)}
+        />
+      )}
+
+      {/* Event Detail Modal */}
+      {selectedEvent && (
+        <EventModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
     </div>
   );
 }
