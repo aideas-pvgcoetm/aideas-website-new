@@ -2,8 +2,32 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { SplineScene } from '@/components/ui/splite';
 import NeuralBackground from '@/components/ui/NeuralBackground';
+
+const CAPABILITY_ITEMS = [
+  {
+    image: '/assets/img/hero/build-projects.png',
+    primary: 'Projects',
+    secondary: 'Built',
+  },
+  {
+    image: '/assets/img/hero/workshops-and-session.png',
+    primary: 'Workshops',
+    secondary: '& Sessions',
+  },
+  {
+    image: '/assets/img/hero/hackathons-and-competitions.png',
+    primary: 'Hackathons',
+    secondary: '& Competitions',
+  },
+  {
+    image: '/assets/img/hero/tech-community.png',
+    primary: 'Tech',
+    secondary: 'Community',
+  },
+];
 
 const WORDS = ['Researchers', 'Innovators', 'Builders', 'Creators', 'Future Leaders'];
 
@@ -35,6 +59,11 @@ function useTypewriter(words: string[]) {
   return displayed;
 }
 
+function TypewriterText() {
+  const word = useTypewriter(WORDS);
+  return <span className="type-target">{word}</span>;
+}
+
 function useReveal() {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -55,7 +84,6 @@ function useReveal() {
 }
 
 export function Hero() {
-  const word = useTypewriter(WORDS);
   const sectionRef = useReveal() as React.RefObject<HTMLElement>;
 
   const handleScrollDown = (e: React.MouseEvent) => {
@@ -81,192 +109,334 @@ export function Hero() {
 
       <div className="wrap hero-inner relative z-[2]">
         {/* Left copy: z-index 4, tightly grouped editorial stack */}
-        <div className="hero-copy relative z-[4] flex flex-col justify-center max-w-[580px]">
-          {/* 1. Compact technical eyebrow */}
-          <div
-            data-reveal
-            className="hero-eyebrow inline-flex items-center gap-2 select-none pointer-events-none mb-1.5 sm:mb-2"
-            style={{
-              transitionDelay: '.06s',
-              width: 'fit-content',
-            }}
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full bg-[#38bdf8] shadow-[0_0_8px_rgba(56,189,248,0.85)] shrink-0"
-              aria-hidden="true"
-            />
-            <span
-              className="hero-eyebrow-text tracking-[0.22em] sm:tracking-[0.26em] uppercase font-semibold text-[11px] sm:text-[12px]"
-              style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                color: 'rgba(180, 195, 215, 0.72)',
-              }}
-            >
-              WELCOME TO
-            </span>
-          </div>
+        <div className="hero-copy relative z-[4] flex flex-col justify-center w-full max-w-full lg:max-w-[500px]">
+          {/* Scoped style for hero accent refinement, scale & layout */}
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Isometra&display=swap');
+            .empower-line .type-target {
+              color: #38bdf8 !important;
+            }
+            .hero-actions {
+              gap: 12px !important;
+            }
+            @media (min-width: 640px) {
+              .hero-actions {
+                gap: 13px !important;
+              }
+              .hero-actions .btn {
+                padding: 13px 21px !important;
+                font-size: 14.5px !important;
+              }
+            }
+            @media (min-width: 1024px) {
+              .hero-inner {
+                grid-template-columns: minmax(0, 47%) minmax(0, 53%) !important;
+                gap: 32px !important;
+                align-items: center !important;
+              }
+            }
+            @media (min-width: 1280px) {
+              .hero-inner {
+                grid-template-columns: minmax(0, 46%) minmax(0, 54%) !important;
+                gap: 40px !important;
+                align-items: center !important;
+              }
+            }
+            @media (max-width: 960px) {
+              .hero-wordmark-lockup {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+              }
+              .hero-wordmark-lockup .hero-brand-mark {
+                margin-left: auto !important;
+                margin-right: auto !important;
+              }
+              .hero-wordmark-lockup .hero-institutional-identity {
+                text-align: center !important;
+              }
+            }
+          `}</style>
 
-          {/* 2. Large Brand Wordmark: aiDEAS (second largest text element, slightly smaller than main headline) */}
-          <div
-            data-reveal
-            className="hero-brand-mark mb-3.5 sm:mb-4 select-none"
-            style={{
-              transitionDelay: '.14s',
-            }}
-          >
-            <span
-              className="font-bold tracking-tight block"
+          {/* 1 + 2. Shared fit-content block — BUILD eyebrow centers over aiDEAS wordmark */}
+          <div className="hero-wordmark-lockup" style={{ width: 'fit-content' }}>
+
+            {/* BUILD · BREAK · LEARN · REPEAT — no decorative dot, text-align:center within wordmark width */}
+            <div
+              data-reveal
+              className="hero-eyebrow select-none pointer-events-none mb-1.5 sm:mb-2"
               style={{
-                fontFamily: '"Orbitron", var(--font-display), sans-serif',
-                fontSize: 'clamp(24px, 3.4vw, 42px)',
-                lineHeight: '1.1',
-                letterSpacing: '-0.02em',
-                filter: 'drop-shadow(0 0 20px rgba(56, 209, 255, 0.22))',
+                transitionDelay: '.06s',
+                width: '100%',
+                textAlign: 'center',
               }}
             >
-              <span style={{ color: '#38d1ff' }}>aI</span>
               <span
+                className="hero-eyebrow-text tracking-[0.18em] sm:tracking-[0.24em] uppercase font-semibold text-[11px] sm:text-[12.5px] md:text-[13px]"
                 style={{
-                  background: 'linear-gradient(90deg, #38d1ff 0%, #a855f7 65%, #b06bff 100%)',
+                  fontFamily: 'var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                  background: 'linear-gradient(90deg, #8bb4db 0%, #a4b2e6 50%, #b89fd9 100%)',
                   WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
                 }}
               >
-                DEAS
+                BUILD · BREAK · LEARN · REPEAT
               </span>
-            </span>
+            </div>
+
+            {/* MAIN HERO WORDMARK: aIDEAS — predominantly metallic silver/white with subtle brand-color reflections */}
+            <div
+              data-reveal
+              className="hero-brand-mark select-none mb-1.5 sm:mb-2"
+              style={{
+                transitionDelay: '.14s',
+                position: 'relative',
+                display: 'block',
+                width: 'fit-content',
+              }}
+            >
+              {/* Layer 1 — Broad diffused outer atmospheric glow: cyan on left to violet on right */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '-35%',
+                  left: '-16%',
+                  right: '-16%',
+                  bottom: '-30%',
+                  borderRadius: '45%',
+                  background:
+                    'radial-gradient(ellipse 65% 60% at 28% 50%, rgba(56, 209, 255, 0.18) 0%, rgba(79, 143, 247, 0.08) 50%, transparent 80%), radial-gradient(ellipse 65% 60% at 72% 50%, rgba(176, 107, 255, 0.16) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 80%)',
+                  filter: 'blur(56px)',
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              />
+              {/* Layer 2 — Soft inner light field directly behind letters */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '-12%',
+                  left: '-5%',
+                  right: '-5%',
+                  bottom: '-12%',
+                  borderRadius: '35%',
+                  background:
+                    'radial-gradient(ellipse 55% 55% at 30% 50%, rgba(56, 209, 255, 0.25) 0%, rgba(79, 143, 247, 0.12) 40%, transparent 75%), radial-gradient(ellipse 55% 55% at 70% 50%, rgba(176, 107, 255, 0.22) 0%, rgba(139, 92, 246, 0.10) 40%, transparent 75%)',
+                  filter: 'blur(28px)',
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              />
+              {/* aIDEAS: Isometra typeface — metallic silver/white dominant, cyan+violet as faint reflected-light accents only */}
+              <span
+                className="hero-wordmark-text block relative"
+                style={{
+                  fontFamily: '"Isometra", var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                  fontSize: 'clamp(50px, 6.4vw, 91px)',
+                  fontWeight: 400,
+                  lineHeight: '0.94',
+                  letterSpacing: '0.01em',
+                  background:
+                    'linear-gradient(90deg, #6a8898 0%, #98b2c4 14%, #c8dae8 28%, #eaf2f8 40%, #ffffff 48%, #eaf0f8 54%, #c0cedc 64%, #9898c4 76%, #8888b8 88%, #7878a8 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'inline-block',
+                }}
+              >
+                aIDEAS
+              </span>
+            </div>
+
+            {/* Institutional Identity Line: clearly identifies the organization directly below aiDEAS */}
+            <div
+              data-reveal
+              className="hero-institutional-identity select-none mb-3 sm:mb-3.5"
+              style={{
+                transitionDelay: '.18s',
+                width: '100%',
+              }}
+            >
+              <span
+                className="tracking-[0.16em] sm:tracking-[0.20em] uppercase font-semibold text-[10.5px] sm:text-[11.5px] md:text-[12px] block"
+                style={{
+                  fontFamily: 'var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                  color: 'rgba(156, 175, 198, 0.82)',
+                }}
+              >
+                AI &amp; DATA SCIENCE STUDENT ASSOCIATION
+              </span>
+            </div>
+
           </div>
 
-          {/* 3. Primary Two-Line Headline (Dominant textual element, largest in left Hero) */}
-          <h1
-            data-reveal="zoom"
-            className="hero-title mb-4 sm:mb-5"
+          {/* 3. Subtitle with typewriter */}
+          <p
+            className="empower-line mb-5 sm:mb-6"
+            data-reveal
             style={{
               transitionDelay: '.24s',
-              fontFamily: '"Orbitron", sans-serif',
-              lineHeight: '1.14',
-              fontSize: 'clamp(28px, 4.2vw, 54px)',
-              fontWeight: 800,
-              letterSpacing: '-0.015em',
+              fontSize: 'clamp(14px, 1.1vw, 15.5px)',
+              color: 'rgba(132, 148, 170, 0.85)',
+              lineHeight: '1.65',
+              margin: '0 0 20px',
             }}
           >
-            <span
-              className="hero-title-main block sm:whitespace-nowrap"
-              style={{
-                color: 'rgba(215, 224, 235, 0.96)',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              Build Intelligence.
-            </span>
-            <span
-              className="block sm:whitespace-nowrap"
-              style={{
-                background: 'linear-gradient(90deg, #38bdf8 0%, #a855f7 68%, #b06bff 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 0 24px rgba(56, 189, 248, 0.22))',
-              }}
-            >
-              Shape What&apos;s Next.
-            </span>
-          </h1>
-
-          {/* 4. Subtitle */}
-          <p className="empower-line mb-5 sm:mb-6" data-reveal style={{ transitionDelay: '.34s' }}>
             Empowering&nbsp;
-            <span className="type-target">{word}</span>
-            <span className="cursor" aria-hidden="true">
+            <TypewriterText />
+            <span className="cursor" aria-hidden="true" style={{ color: 'rgba(138, 98, 205, 0.62)' }}>
               |
             </span>
           </p>
 
-          {/* 5. Call to Actions */}
-          <div className="hero-actions" data-reveal style={{ transitionDelay: '.44s' }}>
-            <Link href="/about" className="btn btn-primary btn-pulse">
+          {/* 4. Call to Actions */}
+          <div className="hero-actions" data-reveal style={{ transitionDelay: '.34s' }}>
+            <Link href="/spotlight" className="btn btn-primary btn-pulse">
               Explore Now &rarr;
             </Link>
-            <Link href="/spotlight" className="btn btn-ghost">
-              See Events
+            <Link href="/contact" className="btn btn-outline-violet">
+              Partner With Us &rarr;
             </Link>
+          </div>
+
+          {/* 5. Capability Strip: 4 lightweight items in 2x2 grid */}
+          <div
+            data-reveal
+            className="hero-capabilities mt-7 sm:mt-8 lg:mt-9 select-none"
+            style={{ transitionDelay: '.44s' }}
+          >
+            <div className="grid grid-cols-2 gap-x-6 sm:gap-x-8 md:gap-x-10 gap-y-3.5 sm:gap-y-4 max-w-[460px] mx-auto lg:mx-0">
+              {CAPABILITY_ITEMS.map((item) => (
+                <div
+                  key={item.primary + item.secondary}
+                  className="group flex items-center gap-3 text-left cursor-default"
+                >
+                  <div className="relative w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] shrink-0 flex items-center justify-center">
+                    <Image
+                      src={item.image}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-contain transition-all duration-300 ease-out group-hover:scale-[1.05] group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.35)]"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div className="flex flex-col leading-[1.25] transition-transform duration-200 ease-out group-hover:-translate-y-[1px]">
+                    <span
+                      className="text-[15px] sm:text-[16px] font-semibold text-[#f1f5f9] tracking-tight"
+                      style={{ fontFamily: 'var(--font-inter, Inter, system-ui, sans-serif)' }}
+                    >
+                      {item.primary}
+                    </span>
+                    <span
+                      className="text-[13px] sm:text-[13.5px] font-normal text-[#94a3b8] tracking-normal"
+                      style={{ fontFamily: 'var(--font-inter, Inter, system-ui, sans-serif)' }}
+                    >
+                      {item.secondary}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Right Spline 3D scene: seamlessly integrated into Hero background */}
-        <div className="hero-visual relative z-[3] w-full flex flex-col items-center justify-center" data-reveal style={{ transitionDelay: '.2s' }}>
-          {/* Small technical robot annotation (upper) */}
+        <div className="hero-visual relative z-[3] w-full flex flex-col items-center justify-center min-w-0" data-reveal style={{ transitionDelay: '.2s' }}>
+          {/* Futuristic Metallic Headline above the robot: MAKING MACHINES INTELLIGENT */}
           <div
-            className="hidden md:flex items-center gap-2.5 absolute top-4 left-2 lg:left-4 z-20 pointer-events-none select-none"
             data-reveal
-            style={{
-              transitionDelay: '.52s',
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-            }}
+            className="w-full flex items-center justify-center mb-1 sm:mb-2 z-20 pointer-events-none select-none"
+            style={{ transitionDelay: '.30s' }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8]/80 shadow-[0_0_6px_rgba(56,209,255,0.7)]" />
-            <div
-              className="flex flex-col"
-              style={{
-                fontSize: '11px',
-                lineHeight: '1.3',
-                letterSpacing: '0.16em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-              }}
-            >
-              <span className="hero-annotation-label" style={{ color: 'rgba(180, 190, 205, 0.72)' }}>MAKING MACHINES</span>
-              <span className="hero-annotation-val" style={{ color: 'rgba(240, 245, 255, 0.92)' }}>INTELLIGENT</span>
-            </div>
-            <div className="hidden lg:flex items-center">
-              <div
-                style={{
-                  width: '32px',
-                  height: '1px',
-                  background:
-                    'linear-gradient(90deg, rgba(56, 189, 248, 0.5) 0%, rgba(56, 189, 248, 0.15) 70%, transparent 100%)',
-                }}
-              />
-              <div
-                style={{
-                  width: '3px',
-                  height: '3px',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(56, 189, 248, 0.6)',
-                }}
-              />
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Left secondary metallic accent */}
+              <div className="hidden sm:flex items-center gap-1.5 opacity-50">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] shadow-[0_0_4px_rgba(148,163,184,0.4)]" />
+                <div className="w-5 sm:w-8 lg:w-10 h-[1px] bg-gradient-to-r from-[#94a3b8]/50 to-transparent" />
+              </div>
+
+              {/* Two-line metallic emblem headline */}
+              <div className="flex flex-col items-center text-center">
+                <span
+                  className="text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase block"
+                  style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                    background: 'linear-gradient(180deg, #d1d5db 0%, #9ca3af 55%, #4b5563 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    color: 'transparent',
+                    marginBottom: '2px',
+                  }}
+                >
+                  MAKING MACHINES
+                </span>
+                <span
+                  className="text-[18px] sm:text-[21px] lg:text-[24px] font-extrabold tracking-[0.09em] uppercase leading-tight block"
+                  style={{
+                    fontFamily: 'var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                    background:
+                      'linear-gradient(180deg, #5a6775 0%, #9fb0c0 22%, #eaf0f6 44%, #ffffff 52%, #b2c1cf 68%, #5b6976 86%, #3c4650 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    color: 'transparent',
+                    filter:
+                      'drop-shadow(0 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65))',
+                  }}
+                >
+                  INTELLIGENT
+                </span>
+              </div>
+
+              {/* Right secondary metallic accent */}
+              <div className="hidden sm:flex items-center gap-1.5 opacity-50">
+                <div className="w-5 sm:w-8 lg:w-10 h-[1px] bg-gradient-to-l from-[#94a3b8]/50 to-transparent" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] shadow-[0_0_4px_rgba(148,163,184,0.4)]" />
+              </div>
             </div>
           </div>
 
           <div
-            className="w-full max-w-[780px] lg:max-w-[840px] h-[520px] sm:h-[560px] md:h-[600px] lg:h-[640px] relative flex items-center justify-center"
-            style={{
-              WebkitMaskImage: 'radial-gradient(ellipse 98% 95% at 50% 50%, #000000 85%, transparent 100%)',
-              maskImage: 'radial-gradient(ellipse 98% 95% at 50% 50%, #000000 85%, transparent 100%)',
-            }}
+            className="w-full max-w-[680px] lg:max-w-none h-[480px] sm:h-[530px] md:h-[580px] lg:h-[630px] relative flex items-center justify-center"
           >
-            {/* Atmospheric graphite/cool-gray illumination with subtle cyan/violet rim accents */}
-            <div
-              className="pointer-events-none absolute inset-0 z-0 hero-robot-glow"
-              style={{
-                background:
-                  'radial-gradient(ellipse 75% 70% at 50% 50%, rgba(20, 26, 38, 0.45) 0%, rgba(56, 209, 255, 0.035) 30%, rgba(176, 107, 255, 0.02) 52%, transparent 72%)',
-                filter: 'blur(32px)',
-              }}
-              aria-hidden="true"
-            />
-
-            {/* Spline 3D Scene with proportional breathing room scale to prevent clipping of hands/arms */}
-            <div
-              className="w-full h-full relative z-10 flex items-center justify-center pointer-events-auto"
-              style={{
-                transform: 'scale(0.85)',
-                transformOrigin: 'center center',
-              }}
-            >
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="w-full h-full"
+            {/* Robot 3D canvas wrapper without restrictive mask clipping */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Atmospheric graphite/cool-gray illumination with subtle cyan/violet rim accents */}
+              <div
+                className="pointer-events-none absolute inset-0 z-0 hero-robot-glow"
+                style={{
+                  background:
+                    'radial-gradient(ellipse 75% 70% at 50% 50%, rgba(20, 26, 38, 0.45) 0%, rgba(56, 209, 255, 0.035) 30%, rgba(176, 107, 255, 0.02) 52%, transparent 72%)',
+                  filter: 'blur(32px)',
+                }}
+                aria-hidden="true"
               />
+
+              {/* Spline 3D Scene with proportional breathing room scale to prevent clipping of hands/arms */}
+              <div
+                className="w-full h-full relative z-10 flex items-center justify-center pointer-events-auto"
+                style={{
+                  transform: 'scale(0.85)',
+                  transformOrigin: 'center center',
+                }}
+              >
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                />
+              </div>
             </div>
           </div>
 
@@ -299,29 +469,38 @@ export function Hero() {
               <div
                 className="w-4 sm:w-6 h-[1px]"
                 style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.45))',
+                  background: 'linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.45))',
                 }}
               />
               <span
-                className="text-[12px] sm:text-[13.5px] tracking-[0.2em] sm:tracking-[0.24em]"
+                className="text-[12px] sm:text-[13.5px] tracking-[0.2em] sm:tracking-[0.24em] select-none"
                 style={{
                   fontFamily: '"Orbitron", var(--font-display), sans-serif',
                   fontWeight: 700,
                   textIndent: '0.2em',
-                  background:
-                    'linear-gradient(90deg, rgba(225, 235, 245, 0.95) 0%, rgba(56, 189, 248, 0.92) 70%, rgba(168, 85, 247, 0.8) 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
                   textTransform: 'uppercase',
-                  filter: 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.25))',
                 }}
               >
-                MEET R2D2
+                <span style={{ color: 'rgba(160, 175, 195, 0.72)' }}>MEET </span>
+                <span
+                  style={{
+                    background:
+                      'linear-gradient(180deg, #5a6775 0%, #9fb0c0 22%, #eaf0f6 44%, #ffffff 52%, #b2c1cf 68%, #5b6976 86%, #3c4650 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    color: 'transparent',
+                    filter:
+                      'drop-shadow(0 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6))',
+                  }}
+                >
+                  R2D2
+                </span>
               </span>
               <div
                 className="w-4 sm:w-6 h-[1px]"
                 style={{
-                  background: 'linear-gradient(90deg, rgba(168, 85, 247, 0.45), transparent)',
+                  background: 'linear-gradient(90deg, rgba(148, 163, 184, 0.45), transparent)',
                 }}
               />
             </div>

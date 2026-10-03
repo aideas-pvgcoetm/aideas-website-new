@@ -45,6 +45,7 @@ export default function AboutOverviewSection() {
           {cards.map((card, i) => (
             <div key={i} className={`info-card ${card.color}`}>
               <TextBlockAnimation
+                deferUntilSectionInView
                 blockColor="#35C7F3"
                 animateOnScroll={true}
                 duration={0.65}
@@ -53,6 +54,7 @@ export default function AboutOverviewSection() {
                 <h3>{card.title}</h3>
               </TextBlockAnimation>
               <TextBlockAnimation
+                deferUntilSectionInView
                 blockColor="#242832"
                 animateOnScroll={true}
                 duration={0.55}
