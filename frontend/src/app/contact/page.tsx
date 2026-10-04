@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { FaLinkedin, FaInstagram, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import { useState, useRef, useEffect } from 'react';
+import { FaLinkedin, FaInstagram, FaMapMarkerAlt, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
+import ParticlePanel from '@/components/ParticleOrbs';
 
 export default function ContactPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -11,6 +12,16 @@ export default function ContactPage() {
     message: string;
   }>({ type: null, message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const updateMedia = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    updateMedia();
+    window.addEventListener('resize', updateMedia);
+    return () => window.removeEventListener('resize', updateMedia);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,119 +71,228 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#020612] text-white px-6 py-16 relative overflow-hidden">
-      {/* Background Subtle Nebulae */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[700px] h-[400px] bg-blue-600/10 rounded-full blur-[170px] pointer-events-none" />
+    <main className="relative min-h-screen bg-[#000000] text-[#E1E0CC] flex flex-col justify-start overflow-x-hidden pt-16 sm:pt-20 pb-10 selection:bg-[#38d1ff]/20 selection:text-white">
+      {/* ─── Layer 1: Home-Page Base Background & Navy/Charcoal Vignette ─── */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 select-none"
+        style={{
+          backgroundColor: '#000000',
+          backgroundImage:
+            'radial-gradient(ellipse 80% 60% at 50% 20%, rgba(18, 24, 35, 0.5) 0%, rgba(6, 8, 12, 0.98) 100%)',
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="max-w-3xl mx-auto text-center relative z-10">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 mb-4 tracking-tight drop-shadow-md">
-          Contact Us
-        </h1>
-        <p className="text-gray-300 font-mono text-sm sm:text-base mb-10 max-w-xl mx-auto leading-relaxed">
-          Have a question, suggestion, or want to collaborate? Reach out to us through the form below or connect via our social channels.
-        </p>
+      {/* ─── Layer 2: Home-Page Ambient Illumination (Subtle Cyan upper-left, Subtle Violet lower-right) ─── */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 select-none opacity-70"
+        style={{
+          backgroundImage: `
+            radial-gradient(680px 440px at 15% 20%, rgba(56, 209, 255, 0.07), transparent 65%),
+            radial-gradient(680px 440px at 85% 80%, rgba(176, 107, 255, 0.06), transparent 65%)
+          `,
+        }}
+        aria-hidden="true"
+      />
 
-        {/* Status Notification Alerts */}
-        {status.type === 'success' && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 text-sm font-medium flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(16,185,129,0.25)] animate-fadeIn">
-            <FaCheckCircle className="text-emerald-400 text-lg flex-shrink-0" />
-            <span>{status.message}</span>
-          </div>
-        )}
+      {/* ─── Main Content Container (Wider: 1320–1400px, occupying ~85% of desktop) ─── */}
+      <div className="relative z-10 w-full max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 my-auto">
+        
+        {/* ─── TOP SECTION: Main Heading + Supporting Text (Eyebrow removed for optimal vertical space) ─── */}
+        <div className="text-center mb-6 sm:mb-7">
+          {/* Heading: Controlled size 56–60px desktop, clamp(42px, 4vw, 60px) */}
+          <h1 className="text-[clamp(42px,4vw,60px)] font-extrabold tracking-tight leading-[1.08] mb-2 text-white">
+            <span className="text-white">CONTACT </span>
+            <span className="bg-gradient-to-r from-[#38d1ff] via-[#4F8CFF] to-[#9b5cff] bg-clip-text text-transparent">
+              US
+            </span>
+          </h1>
 
-        {status.type === 'error' && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-200 text-sm font-medium flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(244,63,94,0.25)] animate-fadeIn">
-            <FaExclamationCircle className="text-rose-400 text-lg flex-shrink-0" />
-            <span>{status.message}</span>
-          </div>
-        )}
-
-        {/* Contact Form Card */}
-        <div className="bg-[#050c1f]/90 border border-cyan-500/30 rounded-2xl p-6 sm:p-10 shadow-[0_10px_35px_rgba(0,0,0,0.85)] backdrop-blur-xl">
-          <form ref={formRef} onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 text-left">
-            <div>
-              <label htmlFor="name" className="block mb-2 font-mono text-xs uppercase tracking-wider text-cyan-300 font-semibold">
-                Your Name
-              </label>
-              <input
-                id="name"
-                name="Name"
-                type="text"
-                required
-                placeholder="Enter your name"
-                className="w-full px-4 py-3 bg-[#030816] text-white border border-cyan-500/25 rounded-xl 
-                focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-gray-600 text-sm"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block mb-2 font-mono text-xs uppercase tracking-wider text-cyan-300 font-semibold">
-                Your Email Address
-              </label>
-              <input
-                id="email"
-                name="Email"
-                type="email"
-                required
-                placeholder="you@domain.com"
-                className="w-full px-4 py-3 bg-[#030816] text-white border border-cyan-500/25 rounded-xl 
-                focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-gray-600 text-sm"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block mb-2 font-mono text-xs uppercase tracking-wider text-cyan-300 font-semibold">
-                Your Message
-              </label>
-              <textarea
-                id="message"
-                name="Message"
-                rows={5}
-                required
-                placeholder="Write your message or inquiry here..."
-                className="w-full px-4 py-3 bg-[#030816] text-white border border-cyan-500/25 rounded-xl 
-                focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-gray-600 text-sm resize-y"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 w-full sm:w-auto mx-auto flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_28px_rgba(0,240,255,0.5)] cursor-pointer ${
-                isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Sending Directly...
-                </span>
-              ) : (
-                'Send Message'
-              )}
-            </button>
-          </form>
+          {/* Supporting Text: High Contrast & Readability (#A7B0BE) */}
+          <p className="text-sm sm:text-base text-[#A7B0BE] max-w-xl mx-auto leading-relaxed">
+            Have a project, event, idea, or collaboration in mind?{' '}
+            <span className="text-white/90 font-medium">Let&apos;s connect.</span>
+          </p>
         </div>
 
-        {/* Social Icons */}
-        <div className="flex justify-center gap-6 mt-10 text-2xl text-gray-400">
-          {[
-            { href: "https://www.linkedin.com/company/aideas-pvg", icon: <FaLinkedin />, label: "LinkedIn" },
-            { href: "https://www.instagram.com/aideas_pvg/?hl=en", icon: <FaInstagram />, label: "Instagram" },
-          ].map((link, i) => (
+        {/* ─── TWO-COLUMN MAIN CONTENT: Form on Left (~515-525px), Particle Panel on Right (~515-525px) ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch mb-5">
+          
+          {/* LEFT COLUMN: Contact Form on Grey/Charcoal Surface (#0e1219 / #101010) */}
+          <div className="w-full flex justify-center lg:justify-end">
+            <div
+              className="w-full max-w-[610px] min-h-[460px] lg:min-h-[515px] xl:min-h-[525px] border border-white/[0.08] rounded-2xl p-6 sm:p-8 pt-6 sm:pt-7 pb-6 sm:pb-6 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col justify-between relative"
+              style={{
+                background:
+                  'radial-gradient(circle at 10% 20%, rgba(56, 209, 255, 0.03) 0%, transparent 45%), radial-gradient(circle at 90% 80%, rgba(176, 107, 255, 0.03) 0%, transparent 45%), #0e1219',
+              }}
+            >
+              
+              <div>
+                {/* Status Notification Alerts */}
+                {status.type === 'success' && (
+                  <div className="mb-4 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-sm font-medium flex items-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                    <FaCheckCircle className="text-emerald-400 text-lg flex-shrink-0" />
+                    <span className="leading-snug">{status.message}</span>
+                  </div>
+                )}
+
+                {status.type === 'error' && (
+                  <div className="mb-4 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-sm font-medium flex items-center gap-3 shadow-[0_0_20px_rgba(244,63,94,0.2)]">
+                    <FaExclamationCircle className="text-rose-400 text-lg flex-shrink-0" />
+                    <span className="leading-snug">{status.message}</span>
+                  </div>
+                )}
+
+                {/* Functional Contact Form */}
+                <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block mb-1.5 font-mono text-xs uppercase tracking-wider text-[#BFC7D2] font-medium"
+                    >
+                      Your Name
+                    </label>
+                    <input
+                      id="name"
+                      name="Name"
+                      type="text"
+                      required
+                      placeholder="Enter your name"
+                      className="w-full px-4 py-3 bg-[#06080d] text-[#E1E0CC] border border-white/10 rounded-xl focus:outline-none focus:border-[#38d1ff] focus:ring-1 focus:ring-[#38d1ff]/40 transition-all placeholder:text-[#697487] text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block mb-1.5 font-mono text-xs uppercase tracking-wider text-[#BFC7D2] font-medium"
+                    >
+                      Your Email Address
+                    </label>
+                    <input
+                      id="email"
+                      name="Email"
+                      type="email"
+                      required
+                      placeholder="you@domain.com"
+                      className="w-full px-4 py-3 bg-[#06080d] text-[#E1E0CC] border border-white/10 rounded-xl focus:outline-none focus:border-[#38d1ff] focus:ring-1 focus:ring-[#38d1ff]/40 transition-all placeholder:text-[#697487] text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="block mb-1.5 font-mono text-xs uppercase tracking-wider text-[#BFC7D2] font-medium"
+                    >
+                      Your Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="Message"
+                      rows={6}
+                      required
+                      placeholder="Write your message or inquiry here..."
+                      className="w-full px-4 py-3 min-h-[155px] sm:min-h-[168px] bg-[#06080d] text-[#E1E0CC] border border-white/10 rounded-xl focus:outline-none focus:border-[#38d1ff] focus:ring-1 focus:ring-[#38d1ff]/40 transition-all placeholder:text-[#697487] text-sm resize-y"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`mt-1 w-full py-3.5 px-6 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-[#38d1ff] via-[#4F8CFF] to-[#9b5cff] hover:brightness-110 active:brightness-95 transition-all duration-300 shadow-[0_0_20px_rgba(56,209,255,0.25)] flex items-center justify-center cursor-pointer ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2.5">
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Sending Directly...
+                      </span>
+                    ) : (
+                      'Send Message'
+                    )}
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Unified 2×2 Particle Visual Panel (Desktop Only, Matches Form Height ~515-525px) */}
+          {isDesktop && (
+            <div className="w-full flex justify-center lg:justify-start">
+              <ParticlePanel />
+            </div>
+          )}
+
+        </div>
+
+        {/* ─── THREE CONTACT INFO SECTIONS (Horizontal on Desktop, Divided by 1px border-white/[0.08]) ─── */}
+        <div className="w-full max-w-[1268px] mx-auto mt-2 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.08] border border-white/[0.08] rounded-2xl bg-[#0e1219] overflow-hidden shadow-sm">
+            
+            {/* Block 1: LINKEDIN */}
             <a
-              key={i}
-              href={link.href}
+              href="https://www.linkedin.com/company/aideas-pvg"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={link.label}
-              className="hover:text-cyan-300 hover:scale-110 transition-all duration-200"
+              aria-label="LinkedIn"
+              className="group flex items-center justify-center gap-4 px-6 py-4 hover:bg-[#131923] transition-colors"
             >
-              {link.icon}
+              <FaLinkedin className="text-[22px] text-[#38d1ff] group-hover:scale-110 transition-transform flex-shrink-0" />
+              <div className="text-left">
+                <span className="block text-[12px] font-mono uppercase tracking-[0.2em] text-[#8E99A8] font-medium leading-none mb-1">
+                  LinkedIn
+                </span>
+                <span className="text-[15px] font-medium text-[#E1E0CC] group-hover:text-[#38d1ff] transition-colors leading-tight">
+                  aiDEAS PVG
+                </span>
+              </div>
             </a>
-          ))}
+
+            {/* Block 2: INSTAGRAM */}
+            <a
+              href="https://www.instagram.com/aideas_pvg/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="group flex items-center justify-center gap-4 px-6 py-4 hover:bg-[#131923] transition-colors"
+            >
+              <FaInstagram className="text-[22px] text-[#38d1ff] group-hover:scale-110 transition-transform flex-shrink-0" />
+              <div className="text-left">
+                <span className="block text-[12px] font-mono uppercase tracking-[0.2em] text-[#8E99A8] font-medium leading-none mb-1">
+                  Instagram
+                </span>
+                <span className="text-[15px] font-medium text-[#E1E0CC] group-hover:text-[#38d1ff] transition-colors leading-tight">
+                  @aideas_pvg
+                </span>
+              </div>
+            </a>
+
+            {/* Block 3: LOCATION (Informational) */}
+            <div className="flex items-center justify-center gap-4 px-6 py-4 bg-[#0e1219]">
+              <FaMapMarkerAlt className="text-[22px] text-[#38d1ff] flex-shrink-0" />
+              <div className="text-left">
+                <span className="block text-[12px] font-mono uppercase tracking-[0.2em] text-[#8E99A8] font-medium leading-none mb-1">
+                  Location
+                </span>
+                <span className="text-[15px] font-medium text-[#E1E0CC] leading-tight">
+                  PVG&apos;S COETM &middot; <span className="text-[#38d1ff]">Pune</span>
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Association Identity subtle tag below */}
+          <div className="text-center mt-3">
+            <p className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#8E99A8]">
+              AI &amp; DATA SCIENCE STUDENT ASSOCIATION
+            </p>
+          </div>
         </div>
+
       </div>
     </main>
   );
