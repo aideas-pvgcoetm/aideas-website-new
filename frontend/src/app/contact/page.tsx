@@ -270,18 +270,24 @@ export default function ContactPage() {
               </div>
             </a>
 
-            {/* Block 3: LOCATION (Informational) */}
-            <div className="flex items-center justify-center gap-4 px-6 py-4 bg-[#0e1219]">
-              <FaMapMarkerAlt className="text-[22px] text-[#38d1ff] flex-shrink-0" />
+            {/* Block 3: LOCATION (Clickable Link to Google Maps) */}
+            <a
+              href="https://www.google.com/maps/place/PVG'S+College+Of+Engineering,+Technology+And+Management/@18.4899516,73.8498623,935m/data=!3m2!1e3!4b1!4m6!3m5!1s0x3bc2c004bc8e1d8f:0x12df641707ea878e!8m2!3d18.4899516!4d73.8524372!16zL20vMGducTZm?entry=ttu&g_ep=EgoyMDI2MDkzMC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Location · View on Maps"
+              className="group flex items-center justify-center gap-4 px-6 py-4 hover:bg-[#131923] transition-colors"
+            >
+              <FaMapMarkerAlt className="text-[22px] text-[#38d1ff] group-hover:scale-110 transition-transform flex-shrink-0" />
               <div className="text-left">
                 <span className="block text-[12px] font-mono uppercase tracking-[0.2em] text-[#8E99A8] font-medium leading-none mb-1">
-                  Location
+                  LOCATION &middot; VIEW ON MAPS
                 </span>
-                <span className="text-[15px] font-medium text-[#E1E0CC] leading-tight">
+                <span className="text-[15px] font-medium text-[#E1E0CC] group-hover:text-[#38d1ff] transition-colors leading-tight">
                   PVG&apos;S COETM &middot; <span className="text-[#38d1ff]">Pune</span>
                 </span>
               </div>
-            </div>
+            </a>
 
           </div>
 
