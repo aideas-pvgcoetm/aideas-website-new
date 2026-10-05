@@ -1,13 +1,13 @@
 'use client'
 
-import React, { Component, ReactNode, useState, useEffect } from 'react'
+import React, { Component, ReactNode, useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 
 const Spline = dynamic(() => import('@splinetool/react-spline'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-600/20 via-purple-600/20 to-cyan-400/20 border border-blue-400/30 animate-pulse flex items-center justify-center shadow-[0_0_30px_rgba(56,209,255,0.2)]" />
     </div>
   ),
 })
@@ -61,25 +61,35 @@ class SplineErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
 
 export function SplineScene({ scene, className }: SplineSceneProps) {
   const [hasError, setHasError] = useState(false)
-  const [isReady, setIsReady] = useState(false)
-  const [isInView, setIsInView] = useState(true)
-  const containerRef = React.useRef<HTMLDivElement>(null)
+  const [isInView, setIsInView] = useState(false)
+  const [shouldRenderSpline, setShouldRenderSpline] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Check hardware & motion preference
+    const finePointer = window.matchMedia('(pointer: fine)').matches
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // On touch devices or reduced motion preference, keep clean fallback placeholder
+    if (!finePointer || reducedMotion) {
+      setShouldRenderSpline(false)
+      return
+    }
+
+    setShouldRenderSpline(true)
+
     if (!containerRef.current) return
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInView(entry.isIntersecting)
       },
-      { threshold: 0.05 }
+      { rootMargin: '150px 0px 150px 0px', threshold: 0.01 }
     )
     observer.observe(containerRef.current)
     return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
-    let isMounted = true
-
     // Catch unhandled Promise rejections from @splinetool/runtime
     const handleRejection = (event: PromiseRejectionEvent) => {
       if (
@@ -89,53 +99,30 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
           String(event.reason).includes('spline'))
       ) {
         event.preventDefault()
-        if (isMounted) setHasError(true)
+        setHasError(true)
       }
     }
 
     window.addEventListener('unhandledrejection', handleRejection)
-
-    // Pre-verify scene URL availability
-    fetch(scene, { method: 'HEAD', mode: 'cors' })
-      .then((res) => {
-        if (!isMounted) return
-        if (res.ok || res.status === 0) {
-          setIsReady(true)
-        } else {
-          setHasError(true)
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          fetch(scene, { mode: 'cors' })
-            .then(() => { if (isMounted) setIsReady(true) })
-            .catch(() => { if (isMounted) setHasError(true) })
-        }
-      })
-
     return () => {
-      isMounted = false
       window.removeEventListener('unhandledrejection', handleRejection)
     }
-  }, [scene])
+  }, [])
 
-  if (hasError) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-blue-600/30 via-purple-600/30 to-cyan-400/30 border border-blue-400/40 animate-pulse flex items-center justify-center shadow-[0_0_30px_rgba(56,209,255,0.25)]">
-            <div className="w-14 h-14 rounded-full bg-blue-500/30 blur-md" />
-          </div>
-          <span className="text-[11px] font-mono text-zinc-400 tracking-wider">AI 3D Scene</span>
+  const fallbackVisual = (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="relative flex items-center justify-center">
+        <div className="w-44 h-44 sm:w-56 sm:h-56 rounded-full bg-gradient-to-tr from-blue-600/30 via-cyan-500/20 to-purple-600/30 border border-cyan-400/30 animate-pulse shadow-[0_0_50px_rgba(56,209,255,0.25)] flex items-center justify-center">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-cyan-400/20 blur-xl animate-ping" />
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 
-  if (!isReady) {
+  if (hasError || !shouldRenderSpline) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div ref={containerRef} className="w-full h-full flex items-center justify-center">
+        {fallbackVisual}
       </div>
     )
   }
@@ -143,7 +130,7 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
   return (
     <div ref={containerRef} className="w-full h-full">
       {isInView ? (
-        <SplineErrorBoundary>
+        <SplineErrorBoundary fallback={fallbackVisual}>
           <Spline
             scene={scene}
             className={className}
@@ -151,8 +138,9 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
           />
         </SplineErrorBoundary>
       ) : (
-        <div className="w-full h-full" />
+        fallbackVisual
       )}
     </div>
   )
 }
+

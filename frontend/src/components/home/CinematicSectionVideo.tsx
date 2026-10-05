@@ -54,7 +54,7 @@ export default function CinematicSectionVideo({
     return () => mq.removeEventListener?.('change', handler);
   }, []);
 
-  // Observer 1: "approach" — large rootMargin fires early to attach src + preload metadata
+  // Observer 1: "approach" — tight rootMargin attaches src only when approaching viewport
   useEffect(() => {
     if (srcLoaded) return;
     const el = wrapRef.current;
@@ -67,7 +67,7 @@ export default function CinematicSectionVideo({
           observer.disconnect();
         }
       },
-      { rootMargin: '200px 0px 200px 0px', threshold: 0 }
+      { rootMargin: '50px 0px 50px 0px', threshold: 0 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -122,7 +122,7 @@ export default function CinematicSectionVideo({
           ref={videoRef}
           src={src}
           poster={poster}
-          preload="metadata"
+          preload="none"
           autoPlay={false} // controlled manually via play()/pause()
           loop
           muted

@@ -10,12 +10,19 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Disable smooth scroll hijacking on touch / mobile devices — let compositor handle touch natively at 60-120fps
+    const isTouch = typeof window !== 'undefined' && (
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window
+    );
+
+    if (isTouch) return;
+
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      syncTouch: true,
-      touchMultiplier: 1.8,
+      syncTouch: false,
     });
 
     lenis.on('scroll', ScrollTrigger.update);

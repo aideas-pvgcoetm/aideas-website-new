@@ -32,7 +32,7 @@ const CAPABILITY_ITEMS = [
 const WORDS = ['Researchers', 'Innovators', 'Builders', 'Creators', 'Future Leaders'];
 
 function useTypewriter(words: string[]) {
-  const [displayed, setDisplayed] = useState('');
+  const [displayed, setDisplayed] = useState('Researchers');
   const [wordIdx, setWordIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
@@ -112,7 +112,6 @@ export function Hero() {
         <div className="hero-copy relative z-[4] flex flex-col justify-center w-full max-w-full lg:max-w-[500px]">
           {/* Scoped style for hero accent refinement, scale & layout */}
           <style>{`
-            @import url('https://fonts.googleapis.com/css2?family=Isometra&display=swap');
             .empower-line .type-target {
               color: #38bdf8 !important;
             }
@@ -166,10 +165,9 @@ export function Hero() {
 
             {/* BUILD · BREAK · LEARN · REPEAT — no decorative dot, text-align:center within wordmark width */}
             <div
-              data-reveal
-              className="hero-eyebrow select-none pointer-events-none mb-1.5 sm:mb-2"
+              className="hero-eyebrow hero-reveal-immediate select-none pointer-events-none mb-1.5 sm:mb-2"
               style={{
-                transitionDelay: '.06s',
+                animationDelay: '0.06s',
                 width: '100%',
                 textAlign: 'center',
               }}
@@ -191,10 +189,9 @@ export function Hero() {
 
             {/* MAIN HERO WORDMARK: aIDEAS — predominantly metallic silver/white with subtle brand-color reflections */}
             <div
-              data-reveal
-              className="hero-brand-mark select-none mb-1.5 sm:mb-2"
+              className="hero-brand-mark hero-reveal-immediate select-none mb-1.5 sm:mb-2"
               style={{
-                transitionDelay: '.14s',
+                animationDelay: '0.14s',
                 position: 'relative',
                 display: 'block',
                 width: 'fit-content',
@@ -234,11 +231,11 @@ export function Hero() {
                   zIndex: 0,
                 }}
               />
-              {/* aIDEAS: Isometra typeface — metallic silver/white dominant, cyan+violet as faint reflected-light accents only */}
+              {/* aIDEAS: metallic silver/white dominant, cyan+violet as faint reflected-light accents only */}
               <span
                 className="hero-wordmark-text block relative"
                 style={{
-                  fontFamily: '"Isometra", var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                  fontFamily: 'var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
                   fontSize: 'clamp(50px, 6.4vw, 91px)',
                   fontWeight: 400,
                   lineHeight: '0.94',
@@ -260,10 +257,9 @@ export function Hero() {
 
             {/* Institutional Identity Line: clearly identifies the organization directly below aiDEAS */}
             <div
-              data-reveal
-              className="hero-institutional-identity select-none mb-3 sm:mb-3.5"
+              className="hero-institutional-identity hero-reveal-immediate select-none mb-3 sm:mb-3.5"
               style={{
-                transitionDelay: '.18s',
+                animationDelay: '0.18s',
                 width: '100%',
               }}
             >
@@ -282,10 +278,9 @@ export function Hero() {
 
           {/* 3. Subtitle with typewriter */}
           <p
-            className="empower-line mb-5 sm:mb-6"
-            data-reveal
+            className="empower-line hero-reveal-immediate mb-5 sm:mb-6"
             style={{
-              transitionDelay: '.24s',
+              animationDelay: '0.24s',
               fontSize: 'clamp(14px, 1.1vw, 15.5px)',
               color: 'rgba(132, 148, 170, 0.85)',
               lineHeight: '1.65',
@@ -300,7 +295,7 @@ export function Hero() {
           </p>
 
           {/* 4. Call to Actions */}
-          <div className="hero-actions" data-reveal style={{ transitionDelay: '.34s' }}>
+          <div className="hero-actions hero-reveal-immediate" style={{ animationDelay: '0.34s' }}>
             <Link href="/spotlight" className="btn btn-primary btn-pulse">
               Explore Now &rarr;
             </Link>
@@ -311,9 +306,8 @@ export function Hero() {
 
           {/* 5. Capability Strip: 4 lightweight items in 2x2 grid */}
           <div
-            data-reveal
-            className="hero-capabilities mt-7 sm:mt-8 lg:mt-9 select-none"
-            style={{ transitionDelay: '.44s' }}
+            className="hero-capabilities hero-reveal-immediate mt-7 sm:mt-8 lg:mt-9 select-none"
+            style={{ animationDelay: '0.44s' }}
           >
             <div className="grid grid-cols-2 gap-x-6 sm:gap-x-8 md:gap-x-10 gap-y-3.5 sm:gap-y-4 max-w-[460px] mx-auto lg:mx-0">
               {CAPABILITY_ITEMS.map((item) => (

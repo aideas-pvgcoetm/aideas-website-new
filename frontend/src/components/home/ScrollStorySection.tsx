@@ -5,9 +5,10 @@ import { useScroll } from 'framer-motion';
 import SectionHeading from '@/components/ui/SectionHeading';
 
 const TOTAL_FRAMES = 180;
-const MAX_CACHE_DESKTOP = 36;
-const MAX_CACHE_MOBILE = 24;
-const MAX_CONCURRENT_REQUESTS = 4;
+const FRAME_STEP = 3; // Step by 3 frames: cuts 180 frames down to 60 (24MB -> 8MB) with imperceptible scrub difference
+const MAX_CACHE_DESKTOP = 28;
+const MAX_CACHE_MOBILE = 16;
+const MAX_CONCURRENT_REQUESTS = 3;
 
 interface StoryBeat {
   id: string;
@@ -79,9 +80,14 @@ const STORY_BEATS: StoryBeat[] = [
   },
 ];
 
-const getFrameUrl = (frameIndex: number): string => {
+const getQuantizedFrame = (frameIndex: number): number => {
   const clamped = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(frameIndex)));
-  const pad = String(clamped).padStart(3, '0');
+  return Math.min(TOTAL_FRAMES, Math.max(1, Math.round((clamped - 1) / FRAME_STEP) * FRAME_STEP + 1));
+};
+
+const getFrameUrl = (frameIndex: number): string => {
+  const quantized = getQuantizedFrame(frameIndex);
+  const pad = String(quantized).padStart(3, '0');
   return `/assets/scroll-story/aideas/${pad}.jpg`;
 };
 
@@ -368,7 +374,8 @@ export default function ScrollStorySection() {
 
   // Request a specific frame with directional priority preloading
   const requestFrame = useCallback(
-    (target: number, direction: 'forward' | 'backward' | 'none') => {
+    (rawTarget: number, direction: 'forward' | 'backward' | 'none') => {
+      const target = getQuantizedFrame(rawTarget);
       targetFrameRef.current = target;
 
       // 1. If target is already decoded, render immediately
@@ -394,16 +401,17 @@ export default function ScrollStorySection() {
 
       // 2. Build directional preload candidates around target
       const priorityList: number[] = [target];
-      const forwardWindow = direction === 'backward' ? 6 : 14;
-      const backwardWindow = direction === 'forward' ? 5 : 12;
+      const forwardWindow = direction === 'backward' ? 4 : 8;
+      const backwardWindow = direction === 'forward' ? 3 : 6;
 
       for (let i = 1; i <= Math.max(forwardWindow, backwardWindow); i++) {
+        const step = i * FRAME_STEP;
         if (direction === 'backward') {
-          if (i <= forwardWindow && target - i >= 1) priorityList.push(target - i);
-          if (i <= backwardWindow && target + i <= TOTAL_FRAMES) priorityList.push(target + i);
+          if (i <= forwardWindow && target - step >= 1) priorityList.push(target - step);
+          if (i <= backwardWindow && target + step <= TOTAL_FRAMES) priorityList.push(target + step);
         } else {
-          if (i <= forwardWindow && target + i <= TOTAL_FRAMES) priorityList.push(target + i);
-          if (i <= backwardWindow && target - i >= 1) priorityList.push(target - i);
+          if (i <= forwardWindow && target + step <= TOTAL_FRAMES) priorityList.push(target + step);
+          if (i <= backwardWindow && target - step >= 1) priorityList.push(target - step);
         }
       }
 
@@ -418,62 +426,81 @@ export default function ScrollStorySection() {
     [drawFrameToCanvas, processQueue]
   );
 
-  // Initial Load: Frame 1 immediately on mount
+  // Viewport proximity tracking and deferred initial frame preloading
   useEffect(() => {
-    isDestroyedRef.current = false;
-    const initialImg = new Image();
-    initialImg.src = getFrameUrl(1);
+    const container = scrollContainerRef.current;
+    if (!container || typeof IntersectionObserver === 'undefined') return;
 
-    const onInitialLoad = () => {
-      if (isDestroyedRef.current) return;
-      cacheRef.current.set(1, initialImg);
-      requestAnimationFrame(() => {
-        drawFrameToCanvas(initialImg, 1);
-      });
-      // Preload subsequent frames 2, 3, 4, 5
-      for (let f = 2; f <= 6; f++) {
-        queueRef.current.push(f);
+    let hasStartedLoading = false;
+
+    const startLoadingFrames = () => {
+      if (hasStartedLoading || isDestroyedRef.current) return;
+      hasStartedLoading = true;
+
+      const initialImg = new Image();
+      initialImg.src = getFrameUrl(1);
+
+      const onInitialLoad = () => {
+        if (isDestroyedRef.current) return;
+        cacheRef.current.set(1, initialImg);
+        requestAnimationFrame(() => {
+          drawFrameToCanvas(initialImg, 1);
+        });
+        // Preload subsequent quantized frames
+        for (let f = 4; f <= 16; f += FRAME_STEP) {
+          queueRef.current.push(f);
+        }
+        processQueue();
+      };
+
+      // Preload authentic aiDEAS logo for watermark masking
+      const brandLogo = new Image();
+      brandLogo.src = '/assets/img/logo-icon.png';
+      const onBrandLoad = () => {
+        brandLogoRef.current = brandLogo;
+        const currentDrawn = lastDrawnFrameRef.current;
+        const currentImg = cacheRef.current.get(currentDrawn) || cacheRef.current.get(1);
+        if (currentImg) {
+          drawFrameToCanvas(currentImg, currentDrawn);
+        }
+      };
+      brandLogo.onload = onBrandLoad;
+      if (brandLogo.complete && brandLogo.naturalWidth > 0) {
+        brandLogoRef.current = brandLogo;
+      } else if (typeof brandLogo.decode === 'function') {
+        brandLogo.decode().then(onBrandLoad).catch(onBrandLoad);
       }
-      processQueue();
-    };
 
-    // Preload authentic aiDEAS logo for watermark masking
-    const brandLogo = new Image();
-    brandLogo.src = '/assets/img/logo-icon.png';
-    const onBrandLoad = () => {
-      brandLogoRef.current = brandLogo;
-      const currentDrawn = lastDrawnFrameRef.current;
-      const currentImg = cacheRef.current.get(currentDrawn) || cacheRef.current.get(1);
-      if (currentImg) {
-        drawFrameToCanvas(currentImg, currentDrawn);
+      initialImg.onload = onInitialLoad;
+      initialImg.onerror = (e) => {
+        console.error('[ScrollStory] Failed to load frame 001 from URL:', initialImg.src, e);
+        setLoadError(`Failed to load frame 001 from: ${initialImg.src}`);
+      };
+
+      if (typeof initialImg.decode === 'function') {
+        initialImg.decode().then(onInitialLoad).catch(onInitialLoad);
       }
     };
-    brandLogo.onload = onBrandLoad;
-    if (brandLogo.complete && brandLogo.naturalWidth > 0) {
-      brandLogoRef.current = brandLogo;
-    } else if (typeof brandLogo.decode === 'function') {
-      brandLogo.decode().then(onBrandLoad).catch(onBrandLoad);
-    }
 
-    initialImg.onload = onInitialLoad;
-    initialImg.onerror = (e) => {
-      console.error('[ScrollStory] Failed to load frame 001 from URL:', initialImg.src, e);
-      setLoadError(`Failed to load frame 001 from: ${initialImg.src}`);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        isSectionNearRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          startLoadingFrames();
+        }
+      },
+      { rootMargin: '300px 0px 300px 0px' }
+    );
 
-    if (typeof initialImg.decode === 'function') {
-      initialImg.decode().then(onInitialLoad).catch(onInitialLoad);
-    }
+    observer.observe(container);
 
     const currentCache = cacheRef.current;
     const currentInFlight = inFlightRef.current;
 
     return () => {
       isDestroyedRef.current = true;
-      brandLogo.onload = null;
-      brandLogo.onerror = null;
-      initialImg.onload = null;
-      initialImg.onerror = null;
+      observer.disconnect();
       currentCache.forEach((img) => {
         img.onload = null;
         img.onerror = null;
@@ -484,23 +511,6 @@ export default function ScrollStorySection() {
       queueRef.current = [];
     };
   }, [drawFrameToCanvas, processQueue]);
-
-  // Viewport proximity tracking with IntersectionObserver
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || typeof IntersectionObserver === 'undefined') return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        isSectionNearRef.current = entry.isIntersecting;
-      },
-      { rootMargin: '350px 0px 350px 0px' }
-    );
-
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
 
   // ResizeObserver to ensure canvas always redraws cleanly when layout settles
   useEffect(() => {
