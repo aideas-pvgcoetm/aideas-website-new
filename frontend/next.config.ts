@@ -23,6 +23,7 @@ if (typeof globalThis !== 'undefined') {
 }
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   // Prevent worker memory crash during static export/page generation
   typescript: {
     ignoreBuildErrors: true,
