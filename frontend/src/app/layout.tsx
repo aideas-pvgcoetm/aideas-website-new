@@ -65,6 +65,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/assets/img/favicon-32.png" type="image/png" />
+        <link rel="preconnect" href="https://prod.spline.design" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://prod.spline.design" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{if(typeof localStorage!=='undefined'&&typeof localStorage.getItem==='function'){var t=localStorage.getItem('aideas-theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light')}}}catch(e){}})();`,

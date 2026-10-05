@@ -69,6 +69,7 @@ export default function ZigzagSection() {
           <div className="zigzag-visual">
             <CinematicSectionVideo
               src="/assets/videos/home/vision/vision.mp4"
+              mobileSrc="/assets/videos/home/vision/vision.mobile.mp4"
               isBlockInView={isVisionInView}
               objectFit="cover"
             />
@@ -97,6 +98,7 @@ export default function ZigzagSection() {
           <div className="zigzag-visual">
             <CinematicSectionVideo
               src="/assets/videos/home/mission/mission.mp4"
+              mobileSrc="/assets/videos/home/mission/mission.mobile.mp4"
               isBlockInView={isMissionInView}
               objectFit="cover"
             />
@@ -123,6 +125,7 @@ export default function ZigzagSection() {
           <div className="zigzag-visual">
             <CinematicSectionVideo
               src="/assets/videos/home/community/community.mp4"
+              mobileSrc="/assets/videos/home/community/community.mobile.mp4"
               isBlockInView={isCommunityInView}
               objectFit="cover"
             />
@@ -160,6 +163,7 @@ export default function ZigzagSection() {
           <div className="zigzag-visual">
             <CinematicSectionVideo
               src="/assets/videos/home/values/values.mp4"
+              mobileSrc="/assets/videos/home/values/values.mobile.mp4"
               isBlockInView={isValuesInView}
               objectFit="cover"
             />

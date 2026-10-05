@@ -231,6 +231,17 @@ nav {
     gap: 10px;
   }
 
+  header {
+    transition:
+      top 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      max-width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      border-radius 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.22s ease,
+      box-shadow 0.22s ease,
+      background 0.22s ease;
+  }
+
   /* 4. Burger menu button with matching circular pill styling */
   .burger {
     display: flex;
@@ -246,7 +257,9 @@ nav {
     cursor: pointer;
     padding: 0;
     flex-shrink: 0;
-    transition: border-color 0.25s, transform 0.25s;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   .burger:hover {
     border-color: var(--cyan-bright);
@@ -258,8 +271,9 @@ nav {
     background: var(--text);
     display: block;
     border-radius: 2px;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease;
     transform-origin: center;
+    will-change: transform, opacity;
   }
   .burger.open span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
@@ -278,6 +292,9 @@ nav {
     top: 68px;
     left: 0;
     right: 0;
+    max-height: calc(100dvh - 68px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background: var(--nav-mobile-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -285,22 +302,35 @@ nav {
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    border-bottom: 0px solid transparent;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    border-bottom: 1px solid var(--border);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition:
+      opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0.2s;
+    will-change: transform, opacity;
   }
   .mobile-drawer.open {
-    max-height: 520px;
-    overflow-y: auto;
-    border-bottom: 1px solid var(--border);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
   }
   .mobile-drawer a {
     width: 100%;
     padding: 14px 24px;
     border-bottom: 1px solid var(--border);
     font-size: 15px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .mobile-drawer a:active {
+    background: rgba(255, 255, 255, 0.05);
   }
   .mobile-drawer a::after {
     display: none;

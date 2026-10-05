@@ -61,7 +61,6 @@ class SplineErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
 
 export function SplineScene({ scene, className }: SplineSceneProps) {
   const [hasError, setHasError] = useState(false)
-  const [isReady, setIsReady] = useState(false)
   const [isInView, setIsInView] = useState(true)
   const [isHidden, setIsHidden] = useState(false)
   const containerRef = React.useRef<HTMLDivElement>(null)
@@ -107,29 +106,11 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
 
     window.addEventListener('unhandledrejection', handleRejection)
 
-    // Pre-verify scene URL availability
-    fetch(scene, { method: 'HEAD', mode: 'cors' })
-      .then((res) => {
-        if (!isMounted) return
-        if (res.ok || res.status === 0) {
-          setIsReady(true)
-        } else {
-          setHasError(true)
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          fetch(scene, { mode: 'cors' })
-            .then(() => { if (isMounted) setIsReady(true) })
-            .catch(() => { if (isMounted) setHasError(true) })
-        }
-      })
-
     return () => {
       isMounted = false
       window.removeEventListener('unhandledrejection', handleRejection)
     }
-  }, [scene])
+  }, [])
 
   if (hasError) {
     return (
@@ -144,18 +125,10 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
     )
   }
 
-  if (!isReady) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
-
   return (
     <div ref={containerRef} className="w-full h-full relative">
       <div 
-        className={`w-full h-full transition-opacity duration-500 ${isInView ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        className={`w-full h-full transition-opacity duration-500 ${isInView ? 'opacity-100 pointer-events-none md:pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         style={{ visibility: isHidden ? 'hidden' : 'visible' }}
         aria-hidden={!isInView}
       >

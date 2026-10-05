@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface CinematicSectionVideoProps {
   src: string;
+  mobileSrc?: string;
   poster?: string;
   /** Whether the parent block is in view (from ZigzagSection's useInView) */
   isBlockInView: boolean;
@@ -18,7 +19,7 @@ interface CinematicSectionVideoProps {
  *
  * Lifecycle:
  *  - Off-screen: src not set, no download triggered.
- *  - Approaching (rootMargin 200px): src is attached, preload="metadata".
+ *  - Approaching (rootMargin 200px): selects responsive src (mobileSrc if <768px, else desktop src), attaches src, preload="metadata".
  *  - In viewport (50% visible): autoplay starts.
  *  - Out of viewport: paused.
  *
@@ -30,6 +31,7 @@ interface CinematicSectionVideoProps {
  */
 export default function CinematicSectionVideo({
   src,
+  mobileSrc,
   poster,
   isBlockInView,
   className = '',
@@ -38,8 +40,8 @@ export default function CinematicSectionVideo({
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  // Whether the src has been attached (lazy — only when approaching viewport)
-  const [srcLoaded, setSrcLoaded] = useState(false);
+  // The resolved active source attached when approaching viewport
+  const [activeSrc, setActiveSrc] = useState<string | null>(null);
   // Whether video is in the active play zone
   const [playing, setPlaying] = useState(false);
   // prefers-reduced-motion
@@ -56,14 +58,18 @@ export default function CinematicSectionVideo({
 
   // Observer 1: "approach" — large rootMargin fires early to attach src + preload metadata
   useEffect(() => {
-    if (srcLoaded) return;
+    if (activeSrc) return;
     const el = wrapRef.current;
     if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setSrcLoaded(true);
+          const isMobile =
+            typeof window !== 'undefined' &&
+            window.matchMedia('(max-width: 767px)').matches;
+          const chosenSrc = isMobile && mobileSrc ? mobileSrc : src;
+          setActiveSrc(chosenSrc);
           observer.disconnect();
         }
       },
@@ -71,7 +77,7 @@ export default function CinematicSectionVideo({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [srcLoaded]);
+  }, [activeSrc, src, mobileSrc]);
 
   // Observer 2: "play zone" — fires when ≥40% of the video is visible
   useEffect(() => {
@@ -91,7 +97,7 @@ export default function CinematicSectionVideo({
   // Drive play / pause from the `playing` state flag
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !srcLoaded) return;
+    if (!video || !activeSrc) return;
 
     if (playing && !reducedMotion) {
       // Guard: video might not be ready yet — play() returns a Promise
@@ -104,7 +110,7 @@ export default function CinematicSectionVideo({
     } else {
       video.pause();
     }
-  }, [playing, srcLoaded, reducedMotion]);
+  }, [playing, activeSrc, reducedMotion]);
 
   return (
     <div
@@ -117,10 +123,10 @@ export default function CinematicSectionVideo({
           'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.06s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.06s',
       }}
     >
-      {srcLoaded ? (
+      {activeSrc ? (
         <video
           ref={videoRef}
-          src={src}
+          src={activeSrc}
           poster={poster}
           preload="metadata"
           autoPlay={false} // controlled manually via play()/pause()

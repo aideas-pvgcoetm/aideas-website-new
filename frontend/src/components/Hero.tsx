@@ -159,6 +159,18 @@ export function Hero() {
                 text-align: center !important;
               }
             }
+            #home {
+              --hero-wordmark-outer-blur: 56px;
+              --hero-wordmark-inner-blur: 28px;
+              --hero-robot-glow-blur: 32px;
+            }
+            @media (max-width: 768px) {
+              #home {
+                --hero-wordmark-outer-blur: 32px;
+                --hero-wordmark-inner-blur: 16px;
+                --hero-robot-glow-blur: 18px;
+              }
+            }
           `}</style>
 
           {/* 1 + 2. Shared fit-content block — BUILD eyebrow centers over aiDEAS wordmark */}
@@ -203,6 +215,7 @@ export function Hero() {
               {/* Layer 1 — Broad diffused outer atmospheric glow: cyan on left to violet on right */}
               <span
                 aria-hidden="true"
+                className="hero-wordmark-glow-outer"
                 style={{
                   position: 'absolute',
                   top: '-35%',
@@ -212,7 +225,7 @@ export function Hero() {
                   borderRadius: '45%',
                   background:
                     'radial-gradient(ellipse 65% 60% at 28% 50%, rgba(56, 209, 255, 0.18) 0%, rgba(79, 143, 247, 0.08) 50%, transparent 80%), radial-gradient(ellipse 65% 60% at 72% 50%, rgba(176, 107, 255, 0.16) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 80%)',
-                  filter: 'blur(56px)',
+                  filter: 'blur(var(--hero-wordmark-outer-blur, 56px))',
                   pointerEvents: 'none',
                   zIndex: 0,
                 }}
@@ -220,6 +233,7 @@ export function Hero() {
               {/* Layer 2 — Soft inner light field directly behind letters */}
               <span
                 aria-hidden="true"
+                className="hero-wordmark-glow-inner"
                 style={{
                   position: 'absolute',
                   top: '-12%',
@@ -229,7 +243,7 @@ export function Hero() {
                   borderRadius: '35%',
                   background:
                     'radial-gradient(ellipse 55% 55% at 30% 50%, rgba(56, 209, 255, 0.25) 0%, rgba(79, 143, 247, 0.12) 40%, transparent 75%), radial-gradient(ellipse 55% 55% at 70% 50%, rgba(176, 107, 255, 0.22) 0%, rgba(139, 92, 246, 0.10) 40%, transparent 75%)',
-                  filter: 'blur(28px)',
+                  filter: 'blur(var(--hero-wordmark-inner-blur, 28px))',
                   pointerEvents: 'none',
                   zIndex: 0,
                 }}
@@ -419,7 +433,7 @@ export function Hero() {
                 style={{
                   background:
                     'radial-gradient(ellipse 75% 70% at 50% 50%, rgba(20, 26, 38, 0.45) 0%, rgba(56, 209, 255, 0.035) 30%, rgba(176, 107, 255, 0.02) 52%, transparent 72%)',
-                  filter: 'blur(32px)',
+                  filter: 'blur(var(--hero-robot-glow-blur, 32px))',
                 }}
                 aria-hidden="true"
               />

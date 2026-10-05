@@ -34,6 +34,11 @@ export default function Navbar() {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
+
+  // Ensure mobile drawer is closed on route navigation
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Spotlight', path: '/spotlight' },
@@ -103,6 +108,7 @@ export default function Navbar() {
             className={`burger md:hidden ${isOpen ? 'open' : ''}`}
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
+            aria-expanded={isOpen}
           >
             <span />
             <span />
@@ -111,7 +117,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Drawer (uses globals.css .mobile-drawer for smooth max-height animation) */}
+      {/* Mobile Drawer (uses globals.css .mobile-drawer for GPU-accelerated transform/opacity animation) */}
       <div className={`mobile-drawer md:hidden ${isOpen ? 'open' : ''}`}>
         {navLinks.map((link) => (
           <Link
