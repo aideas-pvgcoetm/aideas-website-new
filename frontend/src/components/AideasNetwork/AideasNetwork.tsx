@@ -597,7 +597,7 @@ function NetworkFlowContent() {
                 onlyRenderVisibleElements={false}
                 fitViewOptions={{ padding: 0.1 }}
               >
-                <Controls showInteractive={false} className="!bg-black !border-zinc-800 !fill-blue-400 hidden sm:block" />
+                <Controls showInteractive={false} className="hidden sm:flex" />
               </ReactFlow>
             </div>
 

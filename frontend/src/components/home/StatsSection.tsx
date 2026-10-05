@@ -1,6 +1,6 @@
 export default function StatsSection() {
   const stats = [
-    { num: '50+', label: 'Active Members' },
+    { num: '240+', label: 'Active Members' },
     { num: '12+', label: 'Workshops a Year' },
     { num: '3', label: 'Flagship Events' },
     { num: '100%', label: 'Student Run' },

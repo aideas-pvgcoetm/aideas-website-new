@@ -8,22 +8,22 @@ import NeuralBackground from '@/components/ui/NeuralBackground';
 
 const CAPABILITY_ITEMS = [
   {
-    image: '/assets/img/hero/build-projects.png',
+    image: '/assets/img/hero/build-projects.webp',
     primary: 'Projects',
     secondary: 'Built',
   },
   {
-    image: '/assets/img/hero/workshops-and-session.png',
+    image: '/assets/img/hero/workshops-and-session.webp',
     primary: 'Workshops',
     secondary: '& Sessions',
   },
   {
-    image: '/assets/img/hero/hackathons-and-competitions.png',
+    image: '/assets/img/hero/hackathons-and-competitions.webp',
     primary: 'Hackathons',
     secondary: '& Competitions',
   },
   {
-    image: '/assets/img/hero/tech-community.png',
+    image: '/assets/img/hero/tech-community.webp',
     primary: 'Tech',
     secondary: 'Community',
   },

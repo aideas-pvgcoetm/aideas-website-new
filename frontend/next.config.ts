@@ -23,6 +23,7 @@ if (typeof globalThis !== 'undefined') {
 }
 
 const nextConfig: NextConfig = {
+  // Turbopack configuration for Next.js 16
   turbopack: {},
   // Prevent worker memory crash during static export/page generation
   typescript: {

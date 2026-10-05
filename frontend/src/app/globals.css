@@ -5,8 +5,8 @@
   --foreground: #171717;
   --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
   --bg: #000000;
-  --bg-soft: #181d27;
-  --panel: #222936;
+  --bg-soft: #0c1018;
+  --panel: #080b12;
   --border: rgba(255,255,255,0.08);
   --cyan: #22b8f0;
   --cyan-bright: #38d1ff;
@@ -1700,4 +1700,37 @@ html[data-theme="light"] .footer-social a {
 html[data-theme="light"] .footer-social a:hover {
   color: #00a2d8 !important;
   border-color: #00a2d8 !important;
+}
+
+/* Smooth Timeline Card Hover-Reveal */
+.timeline-drawer-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: grid-template-rows;
+}
+
+.timeline-card:hover .timeline-drawer-grid,
+.timeline-card.is-mobile-expanded .timeline-drawer-grid {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline-drawer-inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.5s ease;
+}
+
+.timeline-card:hover .timeline-drawer-inner,
+.timeline-card.is-mobile-expanded .timeline-drawer-inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
 }

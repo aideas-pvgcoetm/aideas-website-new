@@ -393,8 +393,9 @@ export default function SpotlightPage() {
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BorderGlow from '@/components/ui/BorderGlow';
 
 // Achievements Data Structure
 const achievementsData = [
@@ -403,7 +404,7 @@ const achievementsData = [
     students: ['Padmaraj Pawar', 'Aditya Tilekar', 'Aariya Vora', 'Aishwarya Kavhekar', 'Krish Chobe'],
     class: 'SE',
     year: '2025-26',
-    batch: '2028 (SE)',
+    batch: '2028',
     date: 'Mar 2025',
     title: '3rd Position at PICT IMPETUS Project Exhibition',
     details: 'Domain: Digital Image/Speech/Video Processing. Project: VoiceShield - A Real-Time Hybrid AI Framework for Detecting Generative Voice-Cloning and Scam Intent.',
@@ -419,7 +420,7 @@ const achievementsData = [
     students: ['Padmaraj Pawar'],
     class: 'SE',
     year: '2025-26',
-    batch: '2028 (SE)',
+    batch: '2028',
     date: 'Oct 2025',
     title: 'Bhagirath Karandak Award',
     details: 'Team member (Actor) in award-winning performance at the prestigious Purushottam Karandak Competition.',
@@ -433,7 +434,7 @@ const achievementsData = [
     students: ['Soham Mule', 'Aditya Ajay Tilekar', 'Komal'],
     class: 'SE',
     year: '2025-26',
-    batch: '2028 (SE)',
+    batch: '2028',
     date: 'Nov 2025',
     title: 'Winners - VOIS INNOVATION MARATHON 2.0',
     details: 'Built a centralized urban mobility solution helping users select optimized routes to solve urban commute problems.',
@@ -448,7 +449,7 @@ const achievementsData = [
     students: ['Soham Mule', 'Aditya Ajay Tilekar', 'Komal'],
     class: 'SE',
     year: '2025-26',
-    batch: '2028 (SE)',
+    batch: '2028',
     date: 'Jan 2025',
     title: '2nd Rank - IBM SkillsBuild Hacknexus 2025',
     details: 'Secured 2nd rank at IBM SkillsBuild Hacknexus 2025 powered by EDUNET.',
@@ -462,7 +463,7 @@ const achievementsData = [
     students: ['Saanidhi Gade'],
     class: 'SE',
     year: '2025-26',
-    batch: '2028 (SE)',
+    batch: '2028',
     date: 'Feb 2026',
     title: '3rd Rank - HardHack Forge Hackathon 2026',
     details: 'Developed a Smart Mirror AI Assistant with seamless hardware–ML integration at PCCOE.',
@@ -630,7 +631,7 @@ const timelineEvents = [
     title: 'Code Clash',
     description: 'A competitive programming showdown that attracted the brightest minds on campus.',
     longDescription: 'Code Clash is our flagship annual coding competition, attracting the brightest minds to solve a series of complex algorithmic problems. Contestants competed in a high-stakes environment to write efficient and accurate code under tight deadlines, battling for prizes and bragging rights as the top coder on campus.',
-    photos: ['/code.png'],
+    photos: ['/code-clash.jpg'],
     status: 'Past'
   },
   {
@@ -646,7 +647,6 @@ const timelineEvents = [
 
 type TimelineEvent = (typeof timelineEvents)[0];
 
-// Event Detail Modal
 function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => void }) {
   return (
     <AnimatePresence>
@@ -655,7 +655,7 @@ function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => v
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[500] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+        className="fixed inset-0 z-[500] flex items-center justify-center bg-black/85 backdrop-blur-sm px-4 py-6 overflow-y-auto"
         onClick={onClose}
       >
         <motion.div
@@ -663,28 +663,34 @@ function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => v
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.93, y: 24 }}
           transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-          className="relative max-w-lg w-full rounded-3xl overflow-hidden shadow-2xl"
-          style={{ background: 'var(--panel)', border: '1px solid var(--border)' }}
+          className="relative max-w-lg sm:max-w-xl w-full rounded-3xl overflow-hidden shadow-2xl my-auto max-h-[90vh] flex flex-col"
+          style={{ background: '#080b12', border: '1px solid var(--border)' }}
           onClick={e => e.stopPropagation()}
         >
           {/* Close */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all text-sm"
+            className="absolute top-4 right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/80 border border-white/20 text-white transition-all text-sm backdrop-blur-md"
           >
             ✕
           </button>
 
-          {/* Photo */}
+          {/* Photo — object-contain so image is NEVER cut vertically */}
           {event.photos && event.photos.length > 0 && (
-            <div className="w-full h-52 overflow-hidden relative">
-              <img src={event.photos[0]} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--panel), transparent)' }} />
+            <div
+              className="w-full max-h-[380px] sm:max-h-[440px] overflow-hidden relative border-b flex items-center justify-center shrink-0"
+              style={{ borderColor: 'var(--border)', background: '#04060a' }}
+            >
+              <img
+                src={event.photos[0]}
+                alt={event.title}
+                className="w-full h-auto max-h-[380px] sm:max-h-[440px] object-contain"
+              />
             </div>
           )}
 
-          {/* Content */}
-          <div className="p-6">
+          {/* Content with extra details */}
+          <div className="p-6 overflow-y-auto">
             {/* Title + badge */}
             <div className="flex items-start justify-between gap-3 mb-2">
               <h2 className="text-xl font-extrabold text-[var(--text)] leading-snug" style={{ fontFamily: 'var(--font-display)' }}>{event.title}</h2>
@@ -693,7 +699,7 @@ function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => v
               </span>
             </div>
             {/* Date */}
-            <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
+            <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'rgba(255,255,255,0.06)' }}>
               {event.date}
             </span>
             {/* Detailed description */}
@@ -831,17 +837,123 @@ function AchievementModal({
   );
 }
 
+interface TimelineCardProps {
+  event: TimelineEvent;
+  index: number;
+  isEven: boolean;
+  onSelect: () => void;
+}
+
+function TimelineCard({ event, index, isEven, onSelect }: TimelineCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    const isMobile = () => window.innerWidth < 768;
+    const initialTransform = isMobile()
+      ? 'translateY(40px)'
+      : isEven ? 'translateX(-48px)' : 'translateX(48px)';
+    el.style.transform = initialTransform;
+    el.style.opacity = '0';
+
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        el.style.opacity = '1';
+        el.style.transform = isMobile() ? 'translateY(0)' : 'translateX(0)';
+        if (isMobile()) {
+          el.classList.add('is-mobile-expanded');
+        }
+      } else {
+        if (isMobile()) {
+          el.classList.remove('is-mobile-expanded');
+        }
+      }
+    }, { threshold: 0.12, rootMargin: '-10% 0px -10% 0px' });
+
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [isEven]);
+
+  return (
+    <BorderGlow
+      ref={cardRef}
+      suppressHydrationWarning
+      edgeSensitivity={30}
+      glowColor="190 90 70"
+      backgroundColor="#080b12"
+      borderRadius={16}
+      glowRadius={35}
+      glowIntensity={1.0}
+      coneSpread={25}
+      colors={['#38d1ff', '#b06bff', '#38bdf8']}
+      className="timeline-card group rounded-2xl shadow-lg cursor-pointer"
+      style={{
+        border: '1px solid var(--border)',
+        transform: isEven ? 'translateX(-48px)' : 'translateX(48px)',
+        opacity: 0,
+        transition: `opacity 0.5s ease ${index * 0.15}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${index * 0.15}s, border-color 0.2s ease, box-shadow 0.2s ease`
+      }}
+      onClick={onSelect}
+    >
+      {/* Card body — title, description, date */}
+      <div className="p-5">
+        <h3 className="text-lg font-bold text-[var(--text)] leading-snug mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+          {event.title}
+        </h3>
+        <p className="text-[var(--text-dim)] text-sm leading-relaxed mb-3">
+          {event.description}
+        </p>
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
+            {event.date}
+          </span>
+          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full" style={event.status === 'Latest' ? { background: 'rgba(56,209,255,0.1)', color: 'var(--cyan-bright)', border: '1px solid rgba(56,209,255,0.3)' } : { background: 'rgba(176,107,255,0.08)', color: 'var(--purple-bright)', border: '1px solid rgba(176,107,255,0.25)' }}>
+            {event.status}
+          </span>
+        </div>
+      </div>
+
+      {/* Smooth Hover-reveal: image only + click to view */}
+      <div className="timeline-drawer-grid">
+        <div className="timeline-drawer-inner">
+          {/* Photo — object-contain so image is NEVER cut vertically */}
+          {event.photos && event.photos.length > 0 && (
+            <div
+              className="w-full overflow-hidden relative border-t flex items-center justify-center"
+              style={{ borderColor: 'var(--border)', background: '#04060a' }}
+            >
+              <img
+                src={event.photos[0]}
+                alt={event.title}
+                className="w-full h-auto max-h-[340px] sm:max-h-[380px] object-contain transition-transform duration-1000 ease-out group-hover:scale-[1.02]"
+              />
+            </div>
+          )}
+          {/* Click to view cue under image */}
+          <div className="px-5 py-3 border-t flex items-center justify-between" style={{ borderColor: 'var(--border)' }}>
+            <p className="text-[11px] font-medium flex items-center gap-1.5 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'var(--cyan-bright)' }}>
+              Click to view full details →
+            </p>
+          </div>
+        </div>
+      </div>
+    </BorderGlow>
+  );
+}
+
 export default function SpotlightPage() {
   const [activeTab, setActiveTab] = useState<'events' | 'achievements'>('events');
   const [selectedBatch, setSelectedBatch] = useState<string>('All');
   const [selectedAchievement, setSelectedAchievement] = useState<(typeof achievementsData)[0] | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<(typeof timelineEvents)[0] | null>(null);
 
-  const batches = ['All', '2028 (SE)', '2027 (TE)', '2029 (FE)'];
+  const batches = ['All', '2028', '2027', '2029'];
 
   const filteredAchievements = selectedBatch === 'All'
     ? achievementsData
-    : achievementsData.filter(item => item.batch === selectedBatch);
+    : achievementsData.filter(item => item.batch === selectedBatch || item.batch.startsWith(selectedBatch));
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden ambient-panel">
@@ -937,99 +1049,12 @@ export default function SpotlightPage() {
                       <div className={`w-full md:w-[46%] pl-14 md:pl-0 ${
                         isEven ? 'md:pr-10 md:mr-auto' : 'md:pl-10 md:ml-auto'
                       }`}>
-                        <div
-                          className="timeline-card group backdrop-blur-md rounded-2xl overflow-hidden shadow-lg cursor-pointer"
-                          style={{
-                            background: 'var(--panel)',
-                            border: '1px solid var(--border)',
-                            transform: isEven ? 'translateX(-48px)' : 'translateX(48px)',
-                            opacity: 0,
-                            transition: `opacity 0.5s ease ${index * 0.15}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${index * 0.15}s, border-color 0.2s ease, box-shadow 0.2s ease`
-                          }}
-                          ref={(el) => {
-                            if (el) {
-                              const isMobile = () => window.innerWidth < 768;
-                              const initialTransform = isMobile()
-                                ? 'translateY(40px)'
-                                : isEven ? 'translateX(-48px)' : 'translateX(48px)';
-                              el.style.transform = initialTransform;
-                              el.style.opacity = '0';
-                              const obs = new IntersectionObserver(([e]) => {
-                                if (e.isIntersecting) {
-                                  el.style.opacity = '1';
-                                  el.style.transform = isMobile() ? 'translateY(0)' : 'translateX(0)';
-                                  obs.disconnect();
-                                }
-                              }, { threshold: 0.12 });
-                              obs.observe(el);
-                            }
-                          }}
-                          onClick={() => setSelectedEvent(event)}
-                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'var(--cyan-bright)'; el.style.boxShadow = '0 0 30px rgba(56,209,255,0.12)'; }}
-                          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'var(--border)'; el.style.boxShadow = ''; }}
-                        >
-                          {/* Card body — title, description, date */}
-                          <div className="p-5">
-                            <h3 className="text-lg font-bold text-[var(--text)] leading-snug mb-2" style={{ fontFamily: 'var(--font-display)' }}>
-                              {event.title}
-                            </h3>
-                            <p className="text-[var(--text-dim)] text-sm leading-relaxed mb-3">
-                              {event.description}
-                            </p>
-                            <div className="flex items-center justify-between">
-                              <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
-                                {event.date}
-                              </span>
-                              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full" style={event.status === 'Latest' ? { background: 'rgba(56,209,255,0.1)', color: 'var(--cyan-bright)', border: '1px solid rgba(56,209,255,0.3)' } : { background: 'rgba(176,107,255,0.08)', color: 'var(--purple-bright)', border: '1px solid rgba(176,107,255,0.25)' }}>
-                                {event.status}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Hover-reveal: photo + detail panel */}
-                          <div
-                            className="overflow-hidden"
-                            style={{ maxHeight: 0, transition: 'max-height 0.4s cubic-bezier(0.22,1,0.36,1)' }}
-                            ref={(el) => {
-                              if (!el) return;
-                              const card = el.closest('.timeline-card') as HTMLElement;
-                              if (!card) return;
-                              const show = () => { el.style.maxHeight = el.scrollHeight + 'px'; };
-                              const hide = () => { el.style.maxHeight = '0px'; };
-                              card.addEventListener('mouseenter', show);
-                              card.addEventListener('mouseleave', hide);
-
-                              // Expand on scroll for mobile
-                              const obs = new IntersectionObserver(([e]) => {
-                                if (window.innerWidth < 768) {
-                                  if (e.isIntersecting) {
-                                    show();
-                                  } else {
-                                    hide();
-                                  }
-                                }
-                              }, { rootMargin: '-15% 0px -15% 0px', threshold: 0 });
-                              obs.observe(card);
-                            }}
-                          >
-                            {/* Photo */}
-                            {event.photos && event.photos.length > 0 && (
-                              <div className="w-full h-40 overflow-hidden relative">
-                                <img src={event.photos[0]} alt={event.title} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--panel), transparent)' }} />
-                              </div>
-                            )}
-                            {/* Detail text */}
-                            <div className="px-5 pb-5 pt-3 border-t" style={{ borderColor: 'var(--border)' }}>
-                              <div className="text-[var(--text-dim)] text-xs leading-relaxed">
-                                {event.longDescription}
-                              </div>
-                              <p className="mt-3 text-[11px] font-medium" style={{ color: 'var(--cyan-bright)' }}>
-                                Click to view full details →
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                        <TimelineCard
+                          event={event}
+                          index={index}
+                          isEven={isEven}
+                          onSelect={() => setSelectedEvent(event)}
+                        />
                       </div>
                     </div>
                   );
@@ -1069,43 +1094,67 @@ export default function SpotlightPage() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.18, ease: 'easeOut' }}
-                    onClick={() => setSelectedAchievement(item)}
-                    className="backdrop-blur-md rounded-2xl overflow-hidden flex flex-col shadow-md cursor-pointer group" style={{ background: 'var(--panel)', border: '1px solid var(--border)', transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease' }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = 'translateY(-5px) scale(1.02)'; el.style.borderColor = 'var(--cyan-bright)'; el.style.boxShadow = '0 10px 30px rgba(56,209,255,0.12)'; }}
-                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ''; el.style.borderColor = 'var(--border)'; el.style.boxShadow = ''; }}
+                    className="h-full"
                   >
-                    {/* Photo thumbnail */}
-                    <div className="relative w-full h-48 overflow-hidden" style={{ background: 'var(--bg-soft)' }}>
-                      {item.images && item.images.length > 0 ? (
-                        <img
-                          src={item.images[0]}
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[var(--text-faint)] text-4xl">
-                          🏆
+                    <BorderGlow
+                      edgeSensitivity={30}
+                      glowColor="190 90 70"
+                      backgroundColor="#080b12"
+                      borderRadius={16}
+                      glowRadius={35}
+                      glowIntensity={1.0}
+                      coneSpread={25}
+                      colors={['#38d1ff', '#b06bff', '#818cf8']}
+                      className="rounded-2xl flex flex-col shadow-md cursor-pointer group h-full"
+                      style={{
+                        border: '1px solid var(--border)',
+                        transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease'
+                      }}
+                      onMouseEnter={e => {
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.transform = 'translateY(-5px) scale(1.02)';
+                      }}
+                      onMouseLeave={e => {
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.transform = '';
+                      }}
+                      onClick={() => setSelectedAchievement(item)}
+                    >
+                      {/* Photo thumbnail */}
+                      <div className="relative w-full h-48 overflow-hidden" style={{ background: '#05070d' }}>
+                        {item.images && item.images.length > 0 ? (
+                          <img
+                            src={item.images[0]}
+                            alt={item.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[var(--text-faint)] text-4xl">
+                            🏆
+                          </div>
+                        )}
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'rgba(0,0,0,0.3)' }}>
+                          <span className="text-[var(--text)] text-xs px-4 py-1.5 rounded-full border font-medium" style={{ background: 'var(--header-bg)', borderColor: 'var(--border)' }}>
+                            View Details →
+                          </span>
                         </div>
-                      )}
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'rgba(0,0,0,0.3)' }}>
-                        <span className="text-[var(--text)] text-xs px-4 py-1.5 rounded-full border font-medium" style={{ background: 'var(--header-bg)', borderColor: 'var(--border)' }}>
-                          View Details →
-                        </span>
                       </div>
-                    </div>
 
-                    {/* Minimal card info: title + date */}
-                    <div className="p-5 flex flex-col gap-1.5">
-                      <h3 className="text-base font-bold text-[var(--text)] leading-snug transition-colors" style={{ fontFamily: 'var(--font-display)' }} onMouseEnter={e => (e.currentTarget.style.color='var(--cyan-bright)')} onMouseLeave={e => (e.currentTarget.style.color='var(--text)')}>
-                        {item.title}
-                      </h3>
-                      {item.date && (
-                        <span className="font-mono text-[11px] px-2 py-0.5 rounded self-start" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
-                          {item.date}
-                        </span>
-                      )}
-                    </div>
+                      {/* Minimal card info: title + date */}
+                      <div className="p-5 flex flex-col gap-1.5 flex-1 justify-between">
+                        <div>
+                          <h3 className="text-base font-bold text-[var(--text)] leading-snug transition-colors" style={{ fontFamily: 'var(--font-display)' }} onMouseEnter={e => (e.currentTarget.style.color='var(--cyan-bright)')} onMouseLeave={e => (e.currentTarget.style.color='var(--text)')}>
+                            {item.title}
+                          </h3>
+                        </div>
+                        {item.date && (
+                          <span className="font-mono text-[11px] px-2 py-0.5 rounded self-start mt-2" style={{ color: 'var(--text-dim)', background: 'var(--border)' }}>
+                            {item.date}
+                          </span>
+                        )}
+                      </div>
+                    </BorderGlow>
                   </motion.div>
                 ))}
               </AnimatePresence>

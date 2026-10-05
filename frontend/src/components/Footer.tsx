@@ -35,7 +35,6 @@ export default function Footer() {
             <h5>Community</h5>
             <Link href="/members">Members</Link>
             <Link href="/spotlight">Achievements</Link>
-            <Link href="/alumni">Alumni Network</Link>
           </div>
 
           <div className="footer-col">

@@ -92,3 +92,63 @@
 .animate-timer-progress {
   animation: timerProgress 3000ms linear forwards;
 }
+
+/* React Flow Controls (Zoom in / Zoom out) Dark Theme */
+.react-flow__controls {
+  background: rgba(10, 20, 36, 0.9) !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.15) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 3px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  z-index: 45 !important;
+  bottom: 24px !important;
+  left: 24px !important;
+}
+
+.react-flow__controls-button {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: #94a3b8 !important;
+  fill: #94a3b8 !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(59, 130, 246, 0.25) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  color: #38bdf8 !important;
+  fill: #38bdf8 !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
+  transform: scale(1.05);
+}
+
+.react-flow__controls-button:active {
+  transform: scale(0.95);
+  background: rgba(59, 130, 246, 0.4) !important;
+}
+
+.react-flow__controls-button svg {
+  width: 14px !important;
+  height: 14px !important;
+  fill: currentColor !important;
+  color: inherit !important;
+  transition: fill 0.2s ease, color 0.2s ease !important;
+}
+
+.react-flow__controls-button path {
+  fill: currentColor !important;
+}
+
