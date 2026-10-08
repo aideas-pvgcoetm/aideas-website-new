@@ -3,14 +3,66 @@
 import React, { Component, ReactNode, useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 
-const Spline = dynamic(() => import('@splinetool/react-spline'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  ),
-})
+const Spline = dynamic(
+  async () => {
+    const [mod, runtime] = await Promise.all([
+      import('@splinetool/react-spline'),
+      import('@splinetool/runtime'),
+    ])
+    const App = runtime.Application
+    if (App && !(App.prototype as any).__watermarkPatched) {
+      ;(App.prototype as any).__watermarkPatched = true
+
+      const origCreateRenderer = (App.prototype as any)._createRenderer
+      if (origCreateRenderer) {
+        ;(App.prototype as any)._createRenderer = async function (...args: any[]) {
+          const rend = await origCreateRenderer.apply(this, args)
+          if (rend?.pipeline) {
+            rend.pipeline.setWatermark = () => {}
+            if (rend.pipeline.logoOverlayPass) {
+              rend.pipeline.logoOverlayPass.enabled = false
+            }
+            if ('watermarkTexture' in rend.pipeline) {
+              rend.pipeline.watermarkTexture = null
+            }
+          }
+          return rend
+        }
+      }
+
+      const origStart = (App.prototype as any).start
+      if (origStart) {
+        ;(App.prototype as any).start = async function (...args: any[]) {
+          const res = await origStart.apply(this, args)
+          try {
+            if (this._renderer?.pipeline) {
+              this._renderer.pipeline.setWatermark = () => {}
+              if (this._renderer.pipeline.logoOverlayPass) {
+                this._renderer.pipeline.logoOverlayPass.enabled = false
+              }
+              if ('watermarkTexture' in this._renderer.pipeline) {
+                this._renderer.pipeline.watermarkTexture = null
+              }
+            }
+            if (typeof this.requestRender === 'function') {
+              this.requestRender()
+            }
+          } catch (e) {}
+          return res
+        }
+      }
+    }
+    return mod
+  },
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    ),
+  }
+)
 
 interface SplineSceneProps {
   scene: string
@@ -89,6 +141,38 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
     return () => observer.disconnect()
   }, [])
 
+  // Auto-remove Spline watermark logo without needing any overflow clipping
+  useEffect(() => {
+    const removeWatermark = () => {
+      const el =
+        document.getElementById('spline-watermark') ||
+        document.querySelector('a[href*="spline.design"]') ||
+        containerRef.current?.querySelector('a[href*="spline"]')
+      if (el) {
+        ;(el as HTMLElement).style.setProperty('display', 'none', 'important')
+        el.remove()
+      }
+    }
+
+    removeWatermark()
+    const timer = setInterval(removeWatermark, 100)
+    const observer = new MutationObserver(removeWatermark)
+    if (containerRef.current) {
+      observer.observe(containerRef.current, { childList: true, subtree: true })
+    }
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    const timeout = setTimeout(() => {
+      clearInterval(timer)
+    }, 10000)
+
+    return () => {
+      clearInterval(timer)
+      clearTimeout(timeout)
+      observer.disconnect()
+    }
+  }, [])
+
   useEffect(() => {
     let isMounted = true
 
@@ -164,10 +248,40 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
             scene={scene}
             className={className}
             onError={() => setHasError(true)}
-            onLoad={() => {
+            onLoad={(splineApp: any) => {
               if (typeof window !== 'undefined') {
                 window.dispatchEvent(new Event('spline-loaded'));
               }
+
+              const killWatermark = () => {
+                try {
+                  const pipeline = splineApp?._renderer?.pipeline;
+                  if (pipeline) {
+                    if (typeof pipeline.setWatermark === 'function') {
+                      pipeline.setWatermark(null);
+                      pipeline.setWatermark = () => {};
+                    }
+                    if (pipeline.logoOverlayPass) {
+                      pipeline.logoOverlayPass.enabled = false;
+                    }
+                    if ('watermarkTexture' in pipeline) {
+                      pipeline.watermarkTexture = null;
+                    }
+                    if (typeof splineApp.requestRender === 'function') {
+                      splineApp.requestRender();
+                    }
+                  }
+                } catch (e) {
+                  console.warn('Spline watermark suppression:', e);
+                }
+              };
+
+              killWatermark();
+              requestAnimationFrame(killWatermark);
+              setTimeout(killWatermark, 50);
+              setTimeout(killWatermark, 150);
+              setTimeout(killWatermark, 400);
+              setTimeout(killWatermark, 1000);
             }}
           />
         </SplineErrorBoundary>
