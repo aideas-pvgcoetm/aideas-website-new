@@ -108,13 +108,12 @@ export default function TestimonialsSection() {
         </motion.div>
 
         {/* Subtle Divider between Leadership and Community Testimonials */}
-        <div className="pt-8 pb-3 border-t border-[rgba(255,255,255,0.06)] mt-8 flex items-center justify-between">
-          <span className="text-xs font-mono tracking-widest text-[var(--text-faint,#626b78)] uppercase font-semibold">
-            COMMUNITY VOICES
-          </span>
-          <span className="text-[11px] font-mono tracking-widest text-[var(--text-faint,#626b78)] uppercase">
-            05 PERSPECTIVES
-          </span>
+        <div className="pt-8 pb-3 border-t border-[rgba(255,255,255,0.06)] mt-8 flex items-center">
+          <h3 className="text-[15px] sm:text-[17px] font-sans font-medium italic text-[#E2E8F0] tracking-normal select-none flex items-center gap-2">
+            <span className="text-[#30D0F0] text-[13px] sm:text-sm font-normal select-none">::</span>
+            <span>Community Voices</span>
+            <span className="text-[#30D0F0] text-[13px] sm:text-sm font-normal select-none">::</span>
+          </h3>
         </div>
 
         {/* 5-Person Editorial Voice Rail */}

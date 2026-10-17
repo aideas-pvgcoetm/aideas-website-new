@@ -1088,18 +1088,18 @@ nav {
 }
 
 .stat-block {
-  background: linear-gradient(135deg, rgba(6, 24, 44, 0.75) 0%, rgba(10, 16, 38, 0.65) 50%, rgba(25, 10, 42, 0.75) 100%);
-  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: #0D1119;
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 16px;
   padding: 28px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 25px rgba(0, 240, 255, 0.15), 0 0 25px rgba(180, 70, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
   position: relative;
   overflow: hidden;
 }
@@ -1110,30 +1110,50 @@ nav {
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.9), rgba(180, 70, 255, 0.9), transparent);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.2), transparent);
 }
 
 .stat-block:hover {
-  border-color: rgba(180, 70, 255, 0.7);
-  box-shadow: 0 0 35px rgba(0, 240, 255, 0.3), 0 0 35px rgba(180, 70, 255, 0.3);
-  transform: translateY(-3px);
+  background: #121824;
+  border-color: rgba(48, 208, 240, 0.35);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 0 18px rgba(48, 208, 240, 0.10), 0 0 22px rgba(176, 96, 240, 0.08);
+  transform: translateY(-2px);
+}
+
+@media (hover: none) {
+  .stat-block:hover {
+    transform: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border-color: rgba(148, 163, 184, 0.16);
+    background: #0D1119;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-block {
+    transition: none;
+  }
+  .stat-block:hover {
+    transform: none;
+  }
 }
 
 .stat-num {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(32px, 4vw, 44px);
-  background: linear-gradient(90deg, var(--cyan-bright), var(--purple-bright));
+  background: linear-gradient(100deg, #30D0F0 0%, #8A82F5 55%, #B060F0 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
   line-height: 1.1;
 }
 
 .stat-label {
   font-size: 13px;
-  color: var(--text-dim);
+  color: #9CA3AF;
   margin-top: 10px;
   letter-spacing: 0.02em;
 }

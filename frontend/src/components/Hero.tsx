@@ -435,69 +435,43 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Technical Status & Machine Introduction (Anchored directly beneath the robot visual) */}
-          <div className="flex flex-col items-center justify-center text-center mt-1 sm:mt-2 mb-14 md:mb-0 select-none pointer-events-none z-20">
-            {/* Status Line */}
+          {/* Machine Introduction: MEET R2-D2 (Anchored directly beneath the robot visual) */}
+          <div className="flex items-center justify-center -mt-6 sm:-mt-8 md:-mt-10 lg:-mt-[46px] mb-14 md:mb-0 select-none pointer-events-none z-20">
             <div
               data-reveal
-              className="hero-status-text flex items-center justify-center gap-2 text-[10px] sm:text-[11px] tracking-[0.14em] sm:tracking-[0.18em]"
+              className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mx-auto pointer-events-auto"
               style={{
-                transitionDelay: '.80s',
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                textTransform: 'uppercase',
-                color: 'rgba(160, 175, 195, 0.68)',
-                fontWeight: 500,
+                transitionDelay: '.25s',
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8]/70 shadow-[0_0_6px_rgba(56,189,248,0.5)] shrink-0" />
-              <span>CURRENT STATUS: STILL LEARNING.</span>
-            </div>
-
-            {/* Machine Introduction Easter Egg */}
-            <div
-              data-reveal="easter-egg"
-              className="flex items-center justify-center gap-2.5 sm:gap-3 mt-1.5 sm:mt-2"
-              style={{
-                transitionDelay: '1.05s',
-              }}
-            >
-              <div
-                className="w-4 sm:w-6 h-[1px]"
-                style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.45))',
-                }}
-              />
+              {/* MEET label */}
               <span
-                className="text-[12px] sm:text-[13.5px] tracking-[0.2em] sm:tracking-[0.24em] select-none"
+                className="text-[10px] sm:text-[11px] md:text-[12px] font-medium tracking-[0.2em] sm:tracking-[0.24em] uppercase select-none shrink-0"
                 style={{
-                  fontFamily: '"Orbitron", var(--font-display), sans-serif',
-                  fontWeight: 700,
-                  textIndent: '0.2em',
-                  textTransform: 'uppercase',
+                  fontFamily: 'var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                  color: 'rgba(160, 175, 195, 0.78)',
+                  lineHeight: 1,
                 }}
               >
-                <span style={{ color: 'rgba(160, 175, 195, 0.72)' }}>MEET </span>
-                <span
-                  style={{
-                    background:
-                      'linear-gradient(180deg, #5a6775 0%, #9fb0c0 22%, #eaf0f6 44%, #ffffff 52%, #b2c1cf 68%, #5b6976 86%, #3c4650 100%)',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    color: 'transparent',
-                    filter:
-                      'drop-shadow(0 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6))',
-                  }}
-                >
-                  R2D2
-                </span>
+                MEET
               </span>
-              <div
-                className="w-4 sm:w-6 h-[1px]"
+
+              {/* R2-D2 lettering with metallic silver-grey typography */}
+              <span
+                className="text-[22px] sm:text-[24px] md:text-[26px] lg:text-[27px] font-normal tracking-[0.05em] select-none block"
                 style={{
-                  background: 'linear-gradient(90deg, rgba(148, 163, 184, 0.45), transparent)',
+                  fontFamily: '"Isometra", var(--font-inter, Inter, "Geist", system-ui, sans-serif)',
+                  background: 'linear-gradient(180deg, #F1F5F9 0%, #CBD5E1 35%, #8995A5 65%, #E2E8F0 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
+                  filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.75))',
+                  lineHeight: 1,
                 }}
-              />
+              >
+                R2-D2
+              </span>
             </div>
           </div>
         </div>

@@ -48,8 +48,17 @@ export const TestimonialSlider = ({
 }: TestimonialSliderProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
+  const [isAuraToggled, setIsAuraToggled] = useState(false);
 
   const activeReview = reviews[currentIndex] || reviews[0];
+
+  const isSrajal =
+    typeof activeReview?.name === "string" &&
+    activeReview.name.toLowerCase().includes("srajal");
+
+  React.useEffect(() => {
+    setIsAuraToggled(false);
+  }, [currentIndex]);
 
   const handleNext = () => {
     setDirection("right");
@@ -124,30 +133,93 @@ export const TestimonialSlider = ({
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-9 items-center">
             {/* === Left: Active Member Portrait === */}
             <div className="md:col-span-4 lg:col-span-3 flex justify-center md:justify-start">
-              <div className="relative w-[170px] sm:w-[195px] lg:w-[215px] h-[215px] sm:h-[245px] lg:h-[265px] rounded-xl overflow-hidden border border-[rgba(255,255,255,0.08)] bg-[#0b0f17] shadow-[0_12px_28px_rgba(0,0,0,0.5)] shrink-0">
-                <AnimatePresence initial={false} custom={direction} mode="wait">
-                  <motion.div
-                    key={activeReview.id}
-                    custom={direction}
-                    variants={imageVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={{ duration: 0.35, ease: "easeInOut" }}
-                    className="absolute inset-0 w-full h-full"
+              <div className="relative group/srajal shrink-0">
+                {/* Soft ambient red glow behind Srajal's portrait only */}
+                {isSrajal && (
+                  <div
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute -inset-2.5 rounded-2xl pointer-events-none blur-xl transition-opacity duration-300 -z-10",
+                      isAuraToggled
+                        ? "opacity-80"
+                        : "opacity-0 group-hover/srajal:opacity-80"
+                    )}
+                    style={{
+                      background:
+                        "radial-gradient(circle, rgba(239, 68, 68, 0.32) 0%, rgba(185, 28, 28, 0.16) 55%, transparent 75%)",
+                    }}
+                  />
+                )}
+
+                {isSrajal ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsAuraToggled((prev) => !prev)}
+                    aria-label={`Toggle crimson portrait aura for ${activeReview.name}`}
+                    aria-pressed={isAuraToggled}
+                    className={cn(
+                      "relative block w-[170px] sm:w-[195px] lg:w-[215px] h-[215px] sm:h-[245px] lg:h-[265px] rounded-xl overflow-hidden bg-[#0b0f17] shrink-0 text-left cursor-pointer transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF4444] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1017]",
+                      isAuraToggled
+                        ? "border border-[rgba(239,68,68,0.60)] shadow-[0_12px_28px_rgba(0,0,0,0.5),0_0_20px_rgba(239,68,68,0.25),0_0_35px_rgba(185,28,28,0.18),inset_0_0_16px_rgba(248,113,113,0.12)]"
+                        : "border border-[rgba(255,255,255,0.08)] shadow-[0_12px_28px_rgba(0,0,0,0.5)] hover:border-[rgba(239,68,68,0.60)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.5),0_0_20px_rgba(239,68,68,0.25),0_0_35px_rgba(185,28,28,0.18),inset_0_0_16px_rgba(248,113,113,0.12)]"
+                    )}
                   >
-                    <Image
-                      src={activeReview.imageSrc}
-                      alt={activeReview.name}
-                      fill
-                      sizes="(max-width: 640px) 170px, (max-width: 1024px) 195px, 215px"
-                      className="object-cover object-top"
-                      priority={false}
-                    />
-                    {/* Subtle vignette */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none" />
-                  </motion.div>
-                </AnimatePresence>
+                    <AnimatePresence initial={false} custom={direction} mode="wait">
+                      <motion.div
+                        key={activeReview.id}
+                        custom={direction}
+                        variants={imageVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={{ duration: 0.35, ease: "easeInOut" }}
+                        className={cn(
+                          "absolute inset-0 w-full h-full transition-[filter] duration-300",
+                          isAuraToggled
+                            ? "brightness-[1.04]"
+                            : "group-hover/srajal:brightness-[1.04]"
+                        )}
+                      >
+                        <Image
+                          src={activeReview.imageSrc}
+                          alt={activeReview.name}
+                          fill
+                          sizes="(max-width: 640px) 170px, (max-width: 1024px) 195px, 215px"
+                          className="object-cover object-top"
+                          priority={false}
+                        />
+                        {/* Subtle vignette */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none" />
+                      </motion.div>
+                    </AnimatePresence>
+                  </button>
+                ) : (
+                  <div className="relative w-[170px] sm:w-[195px] lg:w-[215px] h-[215px] sm:h-[245px] lg:h-[265px] rounded-xl overflow-hidden border border-[rgba(255,255,255,0.08)] bg-[#0b0f17] shadow-[0_12px_28px_rgba(0,0,0,0.5)] shrink-0">
+                    <AnimatePresence initial={false} custom={direction} mode="wait">
+                      <motion.div
+                        key={activeReview.id}
+                        custom={direction}
+                        variants={imageVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={{ duration: 0.35, ease: "easeInOut" }}
+                        className="absolute inset-0 w-full h-full"
+                      >
+                        <Image
+                          src={activeReview.imageSrc}
+                          alt={activeReview.name}
+                          fill
+                          sizes="(max-width: 640px) 170px, (max-width: 1024px) 195px, 215px"
+                          className="object-cover object-top"
+                          priority={false}
+                        />
+                        {/* Subtle vignette */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none" />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                )}
               </div>
             </div>
 

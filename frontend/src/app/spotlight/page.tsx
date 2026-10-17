@@ -407,6 +407,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BorderGlow from '@/components/ui/BorderGlow';
 import NeuralBackground from '@/components/ui/NeuralBackground';
+import SpotlightEventBanner from '@/components/spotlight/SpotlightEventBanner';
 
 // Achievements Data Structure
 const achievementsData = [
@@ -610,6 +611,7 @@ const timelineEvents = [
     year: '2026',
     title: 'NEUROVERSE Ideathon 2026',
     description: 'A 6-hour flagship ideathon with 3 tracks and up to ₹15,000 prize pool organized by aIDEAS Club.',
+    registrationUrl: 'https://forms.gle/8pk8YK2TshmzXGLq9',
     longDescription: (
       <div className="space-y-4">
         <p>
@@ -630,7 +632,7 @@ const timelineEvents = [
           </div>
           <div className="bg-[var(--bg-soft)] p-3 rounded-xl border border-[var(--border)]">
             <span className="block text-xs font-semibold text-[var(--purple-bright)] uppercase tracking-wider mb-1">Team & Venue</span>
-            <span className="text-[var(--text)] text-sm">Team Size: 1–4 Members<br/>PVG College, Pune</span>
+            <span className="text-[var(--text)] text-sm">Team Size: 1–4 Members<br/>Entry Fee: ₹149 / Team<br/>PVG College, Pune</span>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
@@ -645,6 +647,35 @@ const timelineEvents = [
             <span className="text-[var(--cyan-bright)] font-semibold text-base">Up to ₹15,000 Prize Pool</span>
           </div>
         </div>
+
+        {/* Official Registration Link Callout */}
+        <div
+          className="p-4 rounded-2xl shadow-lg mt-4 flex flex-col sm:flex-row items-center justify-between gap-3"
+          style={{
+            background: 'linear-gradient(135deg, #071830 0%, #0d254c 100%)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+          }}
+        >
+          <div>
+            <span className="text-white font-bold text-sm block">Official Registration</span>
+            <span className="text-blue-200 text-xs block">Google Form for participant registration and submission</span>
+          </div>
+          <a
+            href="https://forms.gle/8pk8YK2TshmzXGLq9"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, #0265d2 0%, #004ac2 50%, #003087 100%)',
+              boxShadow: '0 4px 14px rgba(2, 101, 210, 0.45)',
+              border: '1px solid rgba(147, 197, 253, 0.5)',
+            }}
+          >
+            <span>Register / Registration Form</span>
+            <span aria-hidden="true" className="text-base font-bold">&nearr;</span>
+          </a>
+        </div>
+
         <div className="pt-2 border-t border-[var(--border)]">
           <span className="block text-xs font-semibold text-[var(--text-faint)] uppercase tracking-wider mb-1.5">For Any Queries Contact:</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-[var(--text-dim)]">
@@ -769,10 +800,29 @@ function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => v
                 {event.status}
               </span>
             </div>
-            {/* Date */}
-            <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'rgba(255,255,255,0.06)' }}>
-              {event.date}
-            </span>
+            {/* Date and primary registration action */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mt-1 mb-4">
+              <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'rgba(255,255,255,0.06)' }}>
+                {event.date}
+              </span>
+
+              {event.registrationUrl && (
+                <a
+                  href={event.registrationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #0265d2 0%, #004ac2 50%, #003087 100%)',
+                    boxShadow: '0 3px 12px rgba(2, 101, 210, 0.45)',
+                    border: '1px solid rgba(147, 197, 253, 0.5)',
+                  }}
+                >
+                  <span>Register / Registration Form</span>
+                  <span aria-hidden="true" className="text-base font-bold">&nearr;</span>
+                </a>
+              )}
+            </div>
             {/* Detailed description */}
             <div className="mt-4 text-[var(--text-dim)] text-sm leading-relaxed">{event.longDescription}</div>
           </div>
@@ -1040,7 +1090,7 @@ export default function SpotlightPage() {
     : achievementsData.filter(item => item.batch === selectedBatch || item.batch.startsWith(selectedBatch));
 
   return (
-    <div className="relative min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden spotlight-page bg-black" style={{ backgroundColor: '#000000' }}>
+    <div className="relative min-h-screen pt-[74px] sm:pt-[75px] pb-20 overflow-hidden spotlight-page bg-black" style={{ backgroundColor: '#000000' }}>
       {/* Pure black background with living neural network animation (fixed to viewport so card hover expansions never trigger canvas resize/reset) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-black" style={{ backgroundColor: '#000000' }}>
         <div
@@ -1053,7 +1103,18 @@ export default function SpotlightPage() {
         <NeuralBackground />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+      {/* Full-width NEUROVERSE Ideathon 2026 Announcement Banner with Live Countdown */}
+      <SpotlightEventBanner
+        onViewDetails={() => {
+          setActiveTab('events');
+          const neuroverse = timelineEvents.find(e => e.title.includes('NEUROVERSE'));
+          if (neuroverse) {
+            setSelectedEvent(neuroverse);
+          }
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8">
         {/* Title Header */}
         <div className="section-head mb-12">
           <motion.h1 
