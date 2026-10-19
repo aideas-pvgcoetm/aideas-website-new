@@ -85,6 +85,42 @@ img { max-width: 100%; display: block; }
   }
 }
 
+/* Festive Shree Ram Micro-Interactions */
+@keyframes festive-sparkle {
+  0%, 100% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.15) rotate(45deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.9));
+  }
+}
+
+@keyframes festive-burst {
+  0% {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translate(calc(var(--dx, 0px) * 0.35), calc(var(--dy, 0px) * 0.35)) scale(1.2);
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.9));
+  }
+  100% {
+    transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .festive-sparkle,
+  .festive-particle {
+    display: none !important;
+  }
+}
+
 header {
   position: fixed;
   top: 0;
