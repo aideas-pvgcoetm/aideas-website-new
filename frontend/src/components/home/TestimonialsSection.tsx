@@ -17,13 +17,13 @@ export default function TestimonialsSection() {
   const reviews: Review[] = [
     {
       id: 1,
-      name: "Srajal Kumar Mishra",
+      name: "Srajal* Kumar Mishra",
       shortName: "Srajal",
       designation: "Core Team Member · Frontend",
       quote:
         "Working on the frontend at aiDEAS gave me the opportunity to turn ideas into interfaces that people could actually use. Building the website and working alongside the rest of the team taught me how much better a product becomes when design, development and collaboration happen together.",
-      imageSrc: "/assets/testimonials/srajal-kumar-mishra.jpg",
-      thumbnailSrc: "/assets/testimonials/srajal-kumar-mishra.jpg",
+      imageSrc: "/images/srajal-kumar-mishra.jpeg",
+      thumbnailSrc: "/images/srajal-kumar-mishra.jpeg",
     },
     {
       id: 2,
