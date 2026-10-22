@@ -472,6 +472,12 @@ nav {
   100% { opacity: 0; transform: scale(1.4); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .btn-pulse::after {
+    animation: none;
+  }
+}
+
 /* Typewriter / empowering subtitle */
 .empower-line {
   font-family: var(--font-inter, Inter, 'Geist', system-ui, sans-serif);
@@ -1368,7 +1374,7 @@ footer.site-footer .wrap {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  opacity: 0.14;
+  opacity: 0.15;
   mask-image: linear-gradient(to bottom, transparent, black 65%);
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 65%);
 }

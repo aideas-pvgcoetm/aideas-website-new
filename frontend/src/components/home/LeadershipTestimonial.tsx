@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Mail } from "lucide-react";
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { cn } from "@/lib/utils";
+import OrbCoil from "@/components/ui/OrbCoil";
 
 export interface LeadershipTestimonialItem {
   id: string | number;
@@ -129,6 +130,20 @@ export default function LeadershipTestimonial({
                   "radial-gradient(circle at 10% 20%, rgba(56, 209, 255, 0.05) 0%, transparent 45%), radial-gradient(circle at 90% 80%, rgba(176, 107, 255, 0.05) 0%, transparent 45%), #0e131d",
               }}
             >
+              {/* Decorative Animated Particle Orb (OrbCoil) — Top Right Corner of Card */}
+              <div
+                className="absolute top-4 right-4 sm:top-5 sm:right-5 w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-[80px] lg:h-[80px] z-20 select-none"
+                aria-hidden="true"
+              >
+                <OrbCoil
+                  dotColor="#00FFE5"
+                  accentColor="#38D1FF"
+                  density={260}
+                  dotSize={55}
+                  speed={55}
+                />
+              </div>
+
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current.id}

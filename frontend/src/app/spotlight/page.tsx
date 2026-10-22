@@ -404,6 +404,7 @@ export default function SpotlightPage() {
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import BorderGlow from '@/components/ui/BorderGlow';
 import NeuralBackground from '@/components/ui/NeuralBackground';
@@ -611,7 +612,7 @@ const timelineEvents = [
     year: '2026',
     title: 'NEUROVERSE Ideathon 2026',
     description: 'A 6-hour flagship ideathon with 3 tracks and up to ₹15,000 prize pool organized by aIDEAS Club.',
-    registrationUrl: 'https://forms.gle/8pk8YK2TshmzXGLq9',
+    registrationUrl: undefined as string | undefined,
     longDescription: (
       <div className="space-y-4">
         <p>
@@ -648,7 +649,7 @@ const timelineEvents = [
           </div>
         </div>
 
-        {/* Official Registration Link Callout */}
+        {/* Round 1 Results Callout */}
         <div
           className="p-4 rounded-2xl shadow-lg mt-4 flex flex-col sm:flex-row items-center justify-between gap-3"
           style={{
@@ -657,13 +658,11 @@ const timelineEvents = [
           }}
         >
           <div>
-            <span className="text-white font-bold text-sm block">Official Registration</span>
-            <span className="text-blue-200 text-xs block">Google Form for participant registration and submission</span>
+            <span className="text-white font-bold text-sm block">Round 1 Shortlisting</span>
+            <span className="text-blue-200 text-xs block">Official list of 30 teams selected for the Grand Finale</span>
           </div>
-          <a
-            href="https://forms.gle/8pk8YK2TshmzXGLq9"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/neuroverse-results"
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer shrink-0"
             style={{
               background: 'linear-gradient(135deg, #0265d2 0%, #004ac2 50%, #003087 100%)',
@@ -671,9 +670,9 @@ const timelineEvents = [
               border: '1px solid rgba(147, 197, 253, 0.5)',
             }}
           >
-            <span>Register / Registration Form</span>
-            <span aria-hidden="true" className="text-base font-bold">&nearr;</span>
-          </a>
+            <span>View Round 1 Results</span>
+            <span aria-hidden="true" className="text-base font-bold">&rarr;</span>
+          </Link>
         </div>
 
         <div className="pt-2 border-t border-[var(--border)]">
@@ -800,13 +799,26 @@ function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => v
                 {event.status}
               </span>
             </div>
-            {/* Date and primary registration action */}
+            {/* Date and primary action */}
             <div className="flex flex-wrap items-center justify-between gap-3 mt-1 mb-4">
               <span className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-dim)', background: 'rgba(255,255,255,0.06)' }}>
                 {event.date}
               </span>
 
-              {event.registrationUrl && (
+              {event.title.includes('NEUROVERSE') ? (
+                <Link
+                  href="/neuroverse-results"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #0265d2 0%, #004ac2 50%, #003087 100%)',
+                    boxShadow: '0 3px 12px rgba(2, 101, 210, 0.45)',
+                    border: '1px solid rgba(147, 197, 253, 0.5)',
+                  }}
+                >
+                  <span>View Round 1 Results</span>
+                  <span aria-hidden="true" className="text-base font-bold">&rarr;</span>
+                </Link>
+              ) : event.registrationUrl ? (
                 <a
                   href={event.registrationUrl}
                   target="_blank"
@@ -821,7 +833,7 @@ function EventModal({ event, onClose }: { event: TimelineEvent; onClose: () => v
                   <span>Register / Registration Form</span>
                   <span aria-hidden="true" className="text-base font-bold">&nearr;</span>
                 </a>
-              )}
+              ) : null}
             </div>
             {/* Detailed description */}
             <div className="mt-4 text-[var(--text-dim)] text-sm leading-relaxed">{event.longDescription}</div>
@@ -1013,6 +1025,7 @@ function TimelineCard({ event, index, isEven, onSelect }: TimelineCardProps) {
   return (
     <BorderGlow
       ref={cardRef}
+      id={event.title.includes('NEUROVERSE') ? 'neuroverse-event-card' : undefined}
       suppressHydrationWarning
       edgeSensitivity={30}
       glowColor="190 90 70"
@@ -1022,7 +1035,7 @@ function TimelineCard({ event, index, isEven, onSelect }: TimelineCardProps) {
       glowIntensity={1.0}
       coneSpread={25}
       colors={['#38d1ff', '#b06bff', '#38bdf8']}
-      className="timeline-card group rounded-2xl shadow-lg cursor-pointer"
+      className="timeline-card group rounded-2xl shadow-lg cursor-pointer scroll-mt-28 md:scroll-mt-32"
       style={{
         border: '1px solid var(--border)',
         transform: isEven ? 'translateX(-48px)' : 'translateX(48px)',
@@ -1088,6 +1101,58 @@ export default function SpotlightPage() {
   const filteredAchievements = selectedBatch === 'All'
     ? achievementsData
     : achievementsData.filter(item => item.batch === selectedBatch || item.batch.startsWith(selectedBatch));
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkAndOpenEvent = () => {
+      const url = new URL(window.location.href);
+      const eventParam = url.searchParams.get('event');
+      const hash = url.hash;
+
+      const isNeuroverseModal =
+        eventParam === 'neuroverse' ||
+        eventParam === 'neuroverse-ideathon' ||
+        hash === '#neuroverse' ||
+        hash === '#neuroverse-details';
+
+      if (isNeuroverseModal) {
+        setActiveTab('events');
+        const neuroverse = timelineEvents.find(e => e.title.includes('NEUROVERSE'));
+        if (neuroverse) {
+          setSelectedEvent(neuroverse);
+        }
+
+        // Clean URL cleanly so refreshes, browser back/forward, and closing the dialog do not re-trigger
+        if (window.history && window.history.replaceState) {
+          url.searchParams.delete('event');
+          if (hash === '#neuroverse' || hash === '#neuroverse-details') {
+            url.hash = '';
+          }
+          const cleanUrl = url.pathname + (url.search ? url.search : '') + (url.hash ? url.hash : '');
+          window.history.replaceState(null, '', cleanUrl);
+        }
+        return;
+      }
+
+      // Preserve existing timeline card scroll anchor if specifically requested via #neuroverse-event-card
+      if (hash === '#neuroverse-event-card') {
+        setActiveTab('events');
+        const el = document.getElementById('neuroverse-event-card');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          el.style.opacity = '1';
+          el.style.transform = 'translateX(0)';
+        }
+      }
+    };
+
+    checkAndOpenEvent();
+    window.addEventListener('hashchange', checkAndOpenEvent);
+    return () => {
+      window.removeEventListener('hashchange', checkAndOpenEvent);
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen pt-[74px] sm:pt-[75px] pb-20 overflow-hidden spotlight-page bg-black" style={{ backgroundColor: '#000000' }}>
